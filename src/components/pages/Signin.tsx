@@ -1,6 +1,8 @@
-import React from "react";
-import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import React, { useContext } from "react";
+import firebase from "../../config/firebase";
+import { AuthContext } from "../../AuthService";
+import { useForm, Controller } from "react-hook-form";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -33,8 +35,33 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+type UseForm = {
+  email: string;
+  password: string;
+};
+
 const Signin = () => {
   const classes = useStyles();
+  const { errors, control, handleSubmit } = useForm<UseForm>();
+  const history = useHistory();
+
+  const { user } = useContext(AuthContext);
+
+  const onFormSubmit = (data: UseForm) => {
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(data.email, data.password)
+      .then(() => {
+        history.push("/");
+      })
+      .catch((e) => {
+        console.log(e, "signin");
+      });
+  };
+
+  if (user) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -48,29 +75,51 @@ const Signin = () => {
             <Typography component="h1" variant="h5">
               ログイン
             </Typography>
-            <form className={classes.form} noValidate>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="メールアドレス"
+            <form
+              onSubmit={handleSubmit(onFormSubmit)}
+              className={classes.form}
+              noValidate
+            >
+              <Controller
                 name="email"
-                autoComplete="email"
-                autoFocus
+                defaultValue=""
+                control={control}
+                rules={{ required: true }}
+                as={
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="email"
+                    label="メールアドレス"
+                    name="email"
+                    autoComplete="email"
+                    autoFocus
+                  />
+                }
               />
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
+              {errors.email && <Typography>入力してください</Typography>}
+              <Controller
                 name="password"
-                label="パスワード"
-                type="password"
-                id="password"
-                autoComplete="current-password"
+                defaultValue=""
+                control={control}
+                rules={{ required: true }}
+                as={
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="password"
+                    label="パスワード"
+                    type="password"
+                    id="password"
+                    autoComplete="current-password"
+                  />
+                }
               />
+              {errors.password && <Typography>入力してください</Typography>}
               <Button
                 type="submit"
                 fullWidth

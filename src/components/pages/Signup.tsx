@@ -1,5 +1,9 @@
 import React from "react";
-import { useForm } from "react-hook-form";
+import { auth } from "../../config/firebase";
+import { useForm, Controller } from "react-hook-form";
+import { useHistory } from "react-router-dom";
+
+//material
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -32,8 +36,32 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+type UseForm = {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
 const Signup = () => {
   const classes = useStyles();
+  const { errors, control, handleSubmit, getValues } = useForm<UseForm>();
+  const history = useHistory();
+
+  const onFormSubmit = (data: UseForm) => {
+    auth
+      .createUserWithEmailAndPassword(data.email, data.confirmPassword)
+      .then(() => {
+        const user = auth.currentUser;
+        user?.updateProfile({
+          displayName: data.username,
+        });
+        history.push("/");
+      })
+      .catch((e) => {
+        console.log(e, "signin");
+      });
+  };
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -47,40 +75,104 @@ const Signup = () => {
             <Typography component="h1" variant="h5">
               新規登録
             </Typography>
-            <form className={classes.form} noValidate>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="メールアドレス"
+            <form
+              onSubmit={handleSubmit(onFormSubmit)}
+              className={classes.form}
+              noValidate
+            >
+              <Controller
+                name="username"
+                defaultValue=""
+                control={control}
+                rules={{ required: true }}
+                as={
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="username"
+                    label="ユーザー名"
+                    name="username"
+                    autoComplete="username"
+                    autoFocus
+                  />
+                }
+              />
+              {errors.username && <Typography>入力してください</Typography>}
+              <Controller
                 name="email"
-                autoComplete="email"
-                autoFocus
+                defaultValue=""
+                control={control}
+                rules={{ required: true }}
+                as={
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="email"
+                    label="メールアドレス"
+                    name="email"
+                    autoComplete="email"
+                    autoFocus
+                  />
+                }
               />
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
+              {errors.email && <Typography>入力してください</Typography>}
+              <Controller
                 name="password"
-                label="パスワード"
-                type="password"
-                id="password"
-                autoComplete="current-password"
+                defaultValue=""
+                control={control}
+                rules={{
+                  validate: (value) => {
+                    if (value === getValues().password) {
+                      return true;
+                    } else {
+                      return "パスワードが一致しません";
+                    }
+                  },
+                }}
+                as={
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="password"
+                    label="パスワード"
+                    type="password"
+                    id="password"
+                    autoComplete="current-password"
+                  />
+                }
               />
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="パスワード(確認用)"
-                type="password"
-                id="password"
-                autoComplete="current-password"
+              {errors.confirmPassword && (
+                <Typography>{errors.confirmPassword?.message}</Typography>
+              )}
+
+              <Controller
+                name="confirmPassword"
+                defaultValue=""
+                control={control}
+                rules={{ required: true }}
+                as={
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="confirmPassword"
+                    label="パスワード(確認用)"
+                    type="password"
+                    id="confirmPassword"
+                    autoComplete="current-password"
+                  />
+                }
               />
+              {errors.confirmPassword && (
+                <Typography>入力してください</Typography>
+              )}
               <Button
                 type="submit"
                 fullWidth
@@ -88,7 +180,7 @@ const Signup = () => {
                 color="primary"
                 className={classes.submit}
               >
-                　登録
+                登録
               </Button>
             </form>
           </div>
