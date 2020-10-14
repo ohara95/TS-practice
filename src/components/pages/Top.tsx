@@ -1,7 +1,12 @@
 import React from "react";
+import Chat from "../chat";
 
 const Top = () => {
-  return <div></div>;
+  return (
+    <>
+      <Chat />
+    </>
+  );
 };
 
 export default Top;
