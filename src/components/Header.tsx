@@ -80,7 +80,7 @@ const Header = () => {
               <MoreVertIcon />
             </Badge>
           </IconButton>
-          <GroupModal open={open} close={handleClose} />
+          <GroupModal open={open} close={handleClose} title="グループ設定" />
         </Toolbar>
       </AppBar>
     </>

@@ -17,7 +17,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     paper: {
       backgroundColor: theme.palette.background.paper,
-      border: "2px solid #000",
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
     },
@@ -27,9 +26,10 @@ const useStyles = makeStyles((theme: Theme) =>
 type Props = {
   open: boolean;
   close: (param: boolean) => void;
+  title: string;
 };
 
-const GroupModal: FC<Props> = ({ open, close }) => {
+const GroupModal: FC<Props> = ({ open, close, title }) => {
   const classes = useStyles();
 
   return (
@@ -47,6 +47,7 @@ const GroupModal: FC<Props> = ({ open, close }) => {
     >
       <Fade in={open}>
         <div className={classes.paper}>
+          <Typography>{title}</Typography>
           <CreateGroup />
         </div>
       </Fade>

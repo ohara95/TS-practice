@@ -12,7 +12,7 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import DeleteIcon from "@material-ui/icons/Delete";
+import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 
 const useStyles = makeStyles((theme) => ({
@@ -91,18 +91,17 @@ const Item: FC<Props> = ({ content, id, createdAt }) => {
           color="textSecondary"
         >
           {format(new Date(createdAt.seconds * 1000), "yyyy/MM/dd hh:mm")}
-        </Typography>
-        <ListItemSecondaryAction>
           <IconButton
             onClick={() => {
               deleteItem(id);
             }}
             edge="end"
-            aria-label="Delete"
+            aria-label="delete"
+            size="small"
           >
-            <DeleteIcon />
+            <CloseIcon />
           </IconButton>
-        </ListItemSecondaryAction>
+        </Typography>
       </ListItem>
       <Divider variant="inset" component="li" />
     </>

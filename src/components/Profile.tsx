@@ -22,6 +22,11 @@ import CardMedia from "@material-ui/core/CardMedia";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import ShareIcon from "@material-ui/icons/Share";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import Tooltip from "@material-ui/core/Tooltip";
+import CopyToClipBoard from "react-copy-to-clipboard";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import AssignmentIcon from "@material-ui/icons/Assignment";
+import Grid from "@material-ui/core/Grid";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -135,6 +140,10 @@ const Profile = () => {
       });
   };
 
+  const [openTip, setOpenTip] = useState(false);
+  const handleCloseTip = () => setOpenTip(false);
+  const handleClickButton = () => setOpenTip(true);
+
   return (
     <Card className={classes.root}>
       <CardMedia className={classes.media} image={defaultUser} />
@@ -160,16 +169,31 @@ const Profile = () => {
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Typography paragraph>設定</Typography>
-          <form>
-            <TextField
-              label="Name"
-              value={username}
-              onChange={(e) => {
-                setUsername(e.target.value);
-              }}
-              placeholder={displayName()}
-            />
-            <Button onClick={changeName}>変更</Button>
+          <form style={{ lineHeight: 4 }}>
+            <Grid
+              container
+              direction="row"
+              justify="space-between"
+              alignItems="center"
+            >
+              <Grid item xs={9}>
+                <TextField
+                  label="Name"
+                  value={username}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                  }}
+                  placeholder={displayName()}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={3}>
+                <Button onClick={changeName}>変更</Button>
+              </Grid>
+            </Grid>
             <div style={{ marginTop: 10 }}>
               <input
                 id="contained-button-file"
@@ -182,16 +206,61 @@ const Profile = () => {
                 onClick={onImageSubmit}
                 variant="outlined"
                 component="span"
+                fullWidth
               >
                 画像アップロード
               </Button>
               {/* </label> */}
+              <Grid
+                container
+                direction="row"
+                justify="space-between"
+                alignItems="center"
+              >
+                <Grid item xs={9}>
+                  <TextField
+                    type="text"
+                    label="ID"
+                    disabled
+                    defaultValue={user && user.uid}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={3}>
+                  <InputAdornment position="end">
+                    <Tooltip
+                      arrow
+                      open={openTip}
+                      onClose={handleCloseTip}
+                      disableHoverListener
+                      placement="top"
+                      title="Copied!"
+                    >
+                      <CopyToClipBoard text={user && user.uid}>
+                        <IconButton onClick={handleClickButton}>
+                          <AssignmentIcon />
+                        </IconButton>
+                      </CopyToClipBoard>
+                    </Tooltip>
+                  </InputAdornment>
+                </Grid>
+              </Grid>
             </div>
+            <input
+              id="contained-button-file"
+              multiple
+              type="file"
+              style={{ display: "none" }}
+            />
           </form>
           <Button
             onClick={() => {
               auth.signOut();
             }}
+            fullWidth
+            variant="contained"
+            color="secondary"
+            style={{ marginTop: 10 }}
           >
             ログアウト
           </Button>
