@@ -2,6 +2,7 @@ import React, { FC } from "react";
 import { useRecoilValue } from "recoil";
 import { db } from "../../config/firebase";
 import { currentGroupData } from "../../atoms_recoil";
+import CustomForm from "../molecules/CustomForm";
 //material
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
@@ -30,16 +31,15 @@ const EditGroup: FC<Props> = ({ editGroupName, setEditGroupName }) => {
     }
   };
   return (
-    <form>
-      <TextField
-        value={editGroupName}
-        onChange={(e) => {
-          setEditGroupName(e.target.value);
-        }}
-        label="editRoom"
-      />
-      <Button onClick={onBtnClick}>変更</Button>
-    </form>
+    <CustomForm
+      value={editGroupName}
+      onChange={(e) => {
+        setEditGroupName(e.target.value);
+      }}
+      onClick={onBtnClick}
+      text="変更"
+      label="グループ名変更"
+    />
   );
 };
 
