@@ -9,17 +9,17 @@ import { RecoilRoot } from "recoil";
 
 const App = () => {
   return (
-    // <RecoilRoot>
-    <AuthProvider>
-      <Router>
-        <Switch>
-          <LoggedInRoute exact path="/" component={Top} />
-          <Route path="/signin" component={Signin} />
-          <Route path="/signup" component={Signup} />
-        </Switch>
-      </Router>
-    </AuthProvider>
-    // </RecoilRoot>
+    <RecoilRoot>
+      <AuthProvider>
+        <Router>
+          <Switch>
+            <LoggedInRoute exact path="/" component={Top} />
+            <Route path="/signin" component={Signin} />
+            <Route path="/signup" component={Signup} />
+          </Switch>
+        </Router>
+      </AuthProvider>
+    </RecoilRoot>
   );
 };
 

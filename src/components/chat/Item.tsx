@@ -63,10 +63,17 @@ const Item: FC<Props> = ({ content, id, createdAt }) => {
               >
                 {content}
               </Typography>
-              {format(new Date(createdAt.seconds * 1000), "yyyy/MM/dd hh:mm")}
             </React.Fragment>
           }
         />
+        <Typography
+          component="span"
+          variant="body2"
+          className={classes.inline}
+          color="textSecondary"
+        >
+          {format(new Date(createdAt.seconds * 1000), "yyyy/MM/dd hh:mm")}
+        </Typography>
       </ListItem>
       <Divider variant="inset" component="li" />
     </>

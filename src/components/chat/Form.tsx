@@ -7,6 +7,7 @@ import { AuthContext } from "../../AuthService";
 //material
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
 
 type DbMessage = {
   content: string;
@@ -53,45 +54,53 @@ const Form: FC<Message> = ({ message, setMessage, setMessageList }) => {
 
   return (
     <form>
-      <TextField
-        value={message}
-        onChange={(e) => {
-          setMessage(e.target.value);
-        }}
-        multiline
-        rows={5}
-        variant="outlined"
-      />
-      {selectEmoji && (
-        <Picker
-          onClick={(emoji) => onEmojiSelect({ ...emoji, selectEmoji })}
-          i18n={{
-            search: "検索",
-            categories: {
-              search: "検索結果",
-              recent: "よく使う絵文字",
-              people: "顔 & 人",
-              nature: "動物 & 自然",
-              foods: "食べ物 & 飲み物",
-              activity: "アクティビティ",
-              places: "旅行 & 場所",
-              objects: "オブジェクト",
-              symbols: "記号",
-              flags: "旗",
-              custom: "カスタム",
-            },
-          }}
-          style={{
-            position: "absolute",
-            zIndex: 1,
-            marginTop: 40,
-          }}
-          native
-        />
-      )}
-
-      <Button onClick={handleEmojiOpen}>えもじ</Button>
-      <Button onClick={handleClickTweet}>つぶやく</Button>
+      <Grid container direction="column" justify="flex-start">
+        <Grid item>
+          <TextField
+            value={message}
+            onChange={(e) => {
+              setMessage(e.target.value);
+            }}
+            multiline
+            rows={5}
+            fullWidth
+            variant="outlined"
+          />
+        </Grid>
+        <Grid item>
+          <Button>しゃしん</Button>
+          <Button onClick={handleEmojiOpen}>えもじ</Button>
+          <Button onClick={handleClickTweet}>つぶやく</Button>
+          {selectEmoji && (
+            <Picker
+              onClick={(emoji) => onEmojiSelect({ ...emoji, selectEmoji })}
+              i18n={{
+                search: "検索",
+                categories: {
+                  search: "検索結果",
+                  recent: "よく使う絵文字",
+                  people: "顔 & 人",
+                  nature: "動物 & 自然",
+                  foods: "食べ物 & 飲み物",
+                  activity: "アクティビティ",
+                  places: "旅行 & 場所",
+                  objects: "オブジェクト",
+                  symbols: "記号",
+                  flags: "旗",
+                  custom: "カスタム",
+                },
+              }}
+              style={{
+                position: "absolute",
+                zIndex: 1,
+                marginTop: 10,
+                display: "block",
+              }}
+              native
+            />
+          )}
+        </Grid>
+      </Grid>
     </form>
   );
 };

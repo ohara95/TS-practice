@@ -1,8 +1,9 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../AuthService";
 import firebase, { db, storage } from "../config/firebase";
-// import { next, error, complete } from "../utils/imageUpload";
 import { v4 } from "uuid";
+import defaultUser from "../img/user.jpg";
+// import { next, error, complete } from "../utils/imageUpload";
 //material
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
@@ -12,7 +13,6 @@ import TextField from "@material-ui/core/TextField";
 import CardContent from "@material-ui/core/CardContent";
 import CardActions from "@material-ui/core/CardActions";
 import Collapse from "@material-ui/core/Collapse";
-import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import { grey } from "@material-ui/core/colors";
@@ -22,8 +22,6 @@ import CardMedia from "@material-ui/core/CardMedia";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import ShareIcon from "@material-ui/icons/Share";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
   media: {
     height: 0,
-    paddingTop: "56.25%", // 16:9
+    paddingTop: "80%",
   },
   expand: {
     transform: "rotate(0deg)",
@@ -64,7 +62,6 @@ const Profile = () => {
   const [username, setUsername] = useState("");
   const [avatarImage, setAvatarImage] = useState<File>();
   const [avatarUrl, setAvatarImageUrl] = useState("");
-  const [groupName, setGroupName] = useState("");
   const { user, users } = useContext(AuthContext);
   const uuid = v4();
 
@@ -138,29 +135,10 @@ const Profile = () => {
       });
   };
 
-  const addGroup = () => {
-    setGroupName("");
-    db.collection("groups")
-      .doc()
-      .set({
-        groupName,
-        owner: user.uid,
-        users: firebase.firestore.FieldValue.arrayUnion(user.uid),
-        createdAt: new Date(),
-      });
-  };
-
   return (
     <Card className={classes.root}>
-      <CardMedia className={classes.media} image="/" />
-      <CardHeader
-        avatar={
-          <Avatar aria-label="recipe" className={classes.avatar}>
-            <AccountCircleIcon />
-          </Avatar>
-        }
-        title={displayName()}
-      />
+      <CardMedia className={classes.media} image={defaultUser} />
+      <CardHeader title={displayName()} />
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">
           <FavoriteIcon color="secondary" />
@@ -209,14 +187,6 @@ const Profile = () => {
               </Button>
               {/* </label> */}
             </div>
-            <TextField
-              value={groupName}
-              onChange={(e) => {
-                setGroupName(e.target.value);
-              }}
-              label="CreateRoom"
-            />
-            <Button onClick={addGroup}>作成</Button>
           </form>
         </CardContent>
       </Collapse>
