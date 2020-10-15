@@ -1,14 +1,7 @@
 import React, { useContext } from "react";
 import { AuthContext } from "./AuthService";
 import { atom } from "recoil";
-
-type Group = {
-  createdAt: firebase.firestore.Timestamp;
-  groupName: string;
-  owner: any;
-  users: any[];
-  id: string;
-};
+import { Group } from "./typs";
 
 export const userData = atom({
   key: "userData",
@@ -20,7 +13,7 @@ export const groupsData = atom<Group[]>({
   default: [],
 });
 
-export const currentGroupData = atom<Group | null>({
-  key: "currentGroupData",
-  default: null,
+export const currentGroupId = atom({
+  key: "currentGroupId",
+  default: "",
 });

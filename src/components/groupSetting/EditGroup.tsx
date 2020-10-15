@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { useRecoilValue } from "recoil";
 import { db } from "../../config/firebase";
-import { currentGroupData } from "../../atoms_recoil";
+import { currentGroupId } from "../../atoms_recoil";
 import CustomForm from "../molecules/CustomForm";
 //material
 import TextField from "@material-ui/core/TextField";
@@ -13,13 +13,13 @@ type Props = {
 };
 
 const EditGroup: FC<Props> = ({ editGroupName, setEditGroupName }) => {
-  const currentGroup = useRecoilValue(currentGroupData);
+  const currentId = useRecoilValue(currentGroupId);
   const onBtnClick = () => {
     if (!editGroupName) alert("グループ名を入力して下さい！");
 
-    if (currentGroup) {
+    if (currentId) {
       db.collection("groups")
-        .doc(currentGroup.id)
+        .doc(currentId)
         .get()
         .then((details) => {
           // ref = DocumentReference

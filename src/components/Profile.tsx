@@ -165,7 +165,6 @@ const Profile = () => {
             <form onSubmit={uploadAvatar}>
               <input
                 id="contained-button-file"
-                multiple
                 type="file"
                 onChange={onImageSubmit}
                 style={{ display: "none" }}

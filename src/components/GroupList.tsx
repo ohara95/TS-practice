@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import { AuthContext } from "../AuthService";
 import firebase from "../config/firebase";
-import { groupsData } from "../atoms_recoil";
-import { useRecoilValue } from "recoil";
+import { groupsData, currentGroupId } from "../atoms_recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 // material
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
@@ -27,17 +27,25 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const GroupList = () => {
   const classes = useStyles();
-
   const groups = useRecoilValue(groupsData);
+  const setCurrentGroupId = useSetRecoilState(currentGroupId);
 
+  const clickGroup = (id: string) => {
+    setCurrentGroupId(id);
+  };
   return (
     <div className={classes.root}>
       {groups &&
         groups.map((group) => {
           return (
             <>
-              <List component="nav" aria-label="main mailbox folders">
-                <ListItem button>
+              <List component="nav">
+                <ListItem
+                  button
+                  onClick={() => {
+                    clickGroup(group.id);
+                  }}
+                >
                   <Avatar aria-label="recipe">
                     <DraftsIcon />
                   </Avatar>

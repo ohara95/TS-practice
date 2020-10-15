@@ -1,6 +1,6 @@
 import React from "react";
 import { useRecoilValue } from "recoil";
-import { currentGroupData } from "../atoms_recoil";
+import { currentGroupId, groupsData } from "../atoms_recoil";
 //component
 import GroupModal from "../components/organisms/GroupModal";
 // material
@@ -13,8 +13,9 @@ import IconButton from "@material-ui/core/IconButton";
 import Badge from "@material-ui/core/Badge";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import Avatar from "@material-ui/core/Avatar";
-import DraftsIcon from "@material-ui/icons/Drafts";
+import AvatarGroup from "@material-ui/lab/AvatarGroup";
 import { deepOrange } from "@material-ui/core/colors";
+import DraftsIcon from "@material-ui/icons/Drafts";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -51,11 +52,16 @@ const useStyles = makeStyles((theme) => ({
 
 const Header = () => {
   const classes = useStyles();
-  const currentGroup = useRecoilValue(currentGroupData);
+  const currentId = useRecoilValue(currentGroupId);
+  const groups = useRecoilValue(groupsData);
   const [open, setOpen] = React.useState(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const displayGroupName = () => {
+    return groups.find((group) => group.id === currentId)?.groupName;
+  };
 
   return (
     <>
@@ -69,12 +75,16 @@ const Header = () => {
             noWrap
             className={classes.title}
           >
-            {currentGroup && currentGroup.groupName}
+            {displayGroupName()}
           </Typography>
           {/** 参加メンバーのアイコン */}
-          <Avatar aria-label="recipe">
-            <DraftsIcon />
-          </Avatar>
+          <AvatarGroup max={4}>
+            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+            <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
+            <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
+            <Avatar alt="Agnes Walker" src="/static/images/avatar/4.jpg" />
+            <Avatar alt="Trevor Henderson" src="/static/images/avatar/5.jpg" />
+          </AvatarGroup>
           <IconButton color="inherit" onClick={handleOpen}>
             <Badge color="secondary">
               <MoreVertIcon />

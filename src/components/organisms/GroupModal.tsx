@@ -7,6 +7,8 @@ import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import Typography from "@material-ui/core/Typography";
+import Avatar from "@material-ui/core/Avatar";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -19,6 +21,10 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.background.paper,
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
+    },
+    large: {
+      width: theme.spacing(7),
+      height: theme.spacing(7),
     },
   })
 );
@@ -48,6 +54,10 @@ const GroupModal: FC<Props> = ({ open, close, title }) => {
       <Fade in={open}>
         <div className={classes.paper}>
           <Typography>{title}</Typography>
+          <Avatar aria-label="recipe" className={classes.large}>
+            <AccountCircleIcon />
+          </Avatar>
+
           <CreateGroup />
         </div>
       </Fade>
