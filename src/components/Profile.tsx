@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../AuthService";
-import firebase, { db, storage } from "../config/firebase";
+import firebase, { db, storage, auth } from "../config/firebase";
 import { v4 } from "uuid";
 import defaultUser from "../img/user.jpg";
 // import { next, error, complete } from "../utils/imageUpload";
@@ -188,6 +188,13 @@ const Profile = () => {
               {/* </label> */}
             </div>
           </form>
+          <Button
+            onClick={() => {
+              auth.signOut();
+            }}
+          >
+            ログアウト
+          </Button>
         </CardContent>
       </Collapse>
     </Card>

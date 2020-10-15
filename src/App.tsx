@@ -1,11 +1,11 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { RecoilRoot } from "recoil";
 import { AuthProvider } from "./AuthService";
 import Signin from "./components/pages/Signin";
 import Signup from "./components/pages/Signup";
 import Top from "./components/pages/Top";
 import LoggedInRoute from "./LoggedInRoute";
-import { RecoilRoot } from "recoil";
 
 const App = () => {
   return (

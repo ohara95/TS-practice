@@ -39,17 +39,21 @@ const Form: FC<Message> = ({ message, setMessage, setMessageList }) => {
   //--emoji--//
 
   const handleClickTweet = () => {
-    const userRef = db.collection("users").doc(user.uid);
-    db.collection("chat")
-      .doc()
-      .set({
-        createdAt: new Date(),
-        content: message,
-        // image: imageUrl,
-        groupId: db.doc(`groups/${currentGroup}`),
-        user: userRef,
-      });
-    setMessage("");
+    if (!message) {
+      return;
+    } else {
+      const userRef = db.collection("users").doc(user.uid);
+      db.collection("chat")
+        .doc()
+        .set({
+          createdAt: new Date(),
+          content: message,
+          // image: imageUrl,
+          groupId: db.doc(`groups/${currentGroup}`),
+          user: userRef,
+        });
+      setMessage("");
+    }
   };
 
   return (

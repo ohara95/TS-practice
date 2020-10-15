@@ -1,27 +1,48 @@
 import React from "react";
-import { auth } from "../../config/firebase";
 //component
 import Chat from "../chat";
 import Profile from "../Profile";
 import GroupList from "../GroupList";
 import CreateGroup from "../CreateGroup";
+import Header from "../Header";
 // material
-import Button from "@material-ui/core/Button";
+import { makeStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
+
+const useStyles = makeStyles((theme) => ({
+  content: {
+    flexGrow: 1,
+    height: "100vh",
+    overflow: "auto",
+  },
+  container: {
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+  },
+  appBarSpacer: theme.mixins.toolbar,
+}));
 
 const Top = () => {
+  const classes = useStyles();
   return (
     <>
-      <Chat />
-      <CreateGroup />
-      <GroupList />
-      <Profile />
-      <Button
-        onClick={() => {
-          auth.signOut();
-        }}
-      >
-        ログアウト
-      </Button>
+      <Header />
+      <main className={classes.content}>
+        <div className={classes.appBarSpacer} />
+        <Container maxWidth="lg" className={classes.container}>
+          <Grid container direction="row" justify="space-between" spacing={1}>
+            <Grid item xs={9}>
+              <Chat />
+            </Grid>
+            <Grid item xs={3}>
+              <Profile />
+              <CreateGroup />
+              <GroupList />
+            </Grid>
+          </Grid>
+        </Container>
+      </main>
     </>
   );
 };

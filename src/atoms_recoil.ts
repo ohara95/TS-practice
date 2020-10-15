@@ -18,3 +18,8 @@ export const groupsData = atom<Group[]>({
   key: "groupsData",
   default: [],
 });
+
+export const currentGroupData = atom<Group | null>({
+  key: "currentGroupData",
+  default: null,
+});
