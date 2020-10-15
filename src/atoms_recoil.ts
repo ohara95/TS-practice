@@ -7,6 +7,7 @@ type Group = {
   groupName: string;
   owner: any;
   users: any[];
+  id: string;
 };
 
 export const userData = atom({

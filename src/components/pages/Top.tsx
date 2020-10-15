@@ -3,7 +3,6 @@ import React from "react";
 import Chat from "../chat";
 import Profile from "../Profile";
 import GroupList from "../GroupList";
-import CreateGroup from "../CreateGroup";
 import Header from "../Header";
 // material
 import { makeStyles } from "@material-ui/core/styles";
@@ -37,7 +36,6 @@ const Top = () => {
             </Grid>
             <Grid item xs={3}>
               <Profile />
-              <CreateGroup />
               <GroupList />
             </Grid>
           </Grid>

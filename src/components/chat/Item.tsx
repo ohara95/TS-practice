@@ -1,5 +1,5 @@
 import React, { FC, useContext } from "react";
-import firebase from "../../config/firebase";
+import firebase, { db } from "../../config/firebase";
 import { AuthContext } from "../../AuthService";
 import { format } from "date-fns";
 
@@ -11,6 +11,9 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import DeleteIcon from "@material-ui/icons/Delete";
+import IconButton from "@material-ui/core/IconButton";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,6 +47,21 @@ const Item: FC<Props> = ({ content, id, createdAt }) => {
       }
     }
   };
+  const deleteItem = (id: string) => {
+    console.log(id);
+
+    db.collection("chat")
+      .doc(id)
+      .get()
+      .then((res) => {
+        res.ref.delete();
+      })
+      .catch((err) => console.log(err));
+
+    // if (imageUrl) {
+    //   storage.refFromURL(imageUrl).delete();
+    // }
+  };
 
   return (
     <>
@@ -74,6 +92,17 @@ const Item: FC<Props> = ({ content, id, createdAt }) => {
         >
           {format(new Date(createdAt.seconds * 1000), "yyyy/MM/dd hh:mm")}
         </Typography>
+        <ListItemSecondaryAction>
+          <IconButton
+            onClick={() => {
+              deleteItem(id);
+            }}
+            edge="end"
+            aria-label="Delete"
+          >
+            <DeleteIcon />
+          </IconButton>
+        </ListItemSecondaryAction>
       </ListItem>
       <Divider variant="inset" component="li" />
     </>
