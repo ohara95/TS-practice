@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../AuthService";
 import firebase, { db, storage, auth } from "../config/firebase";
-import { v4 } from "uuid";
 import defaultUser from "../img/user.jpg";
+import { uploadTask } from "../utils/imageUpload";
 // import { next, error, complete } from "../utils/imageUpload";
 //material
 import { makeStyles } from "@material-ui/core/styles";
@@ -67,12 +67,12 @@ const Profile = () => {
   const [username, setUsername] = useState("");
   const [avatarImage, setAvatarImage] = useState<File>();
   const [avatarUrl, setAvatarImageUrl] = useState("");
+  const [openTip, setOpenTip] = useState(false);
   const { user, users } = useContext(AuthContext);
-  const uuid = v4();
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
+  const handleExpandClick = () => setExpanded(!expanded);
+  const handleCloseTip = () => setOpenTip(false);
+  const handleClickButton = () => setOpenTip(true);
 
   const changeName = () => {
     if (username) {
@@ -97,12 +97,9 @@ const Profile = () => {
     }
   };
 
-  const onImageSubmit = (
-    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
-  ) => {
-    const target = e.target as HTMLInputElement;
-    const file: File = (target.files as FileList)[0];
-    if (file) {
+  const onImageSubmit = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files !== null) {
+      const file = e.target.files[0];
       setAvatarImage(file);
     }
   };
@@ -110,39 +107,10 @@ const Profile = () => {
   const uploadAvatar = () => {
     if (!avatarImage) {
       return alert("ファイルを選択されていません");
+    } else {
+      uploadTask("avatars", avatarImage, setAvatarImageUrl);
     }
-    const uploadTask = storage.ref(`/avatars/${uuid}`).put(avatarImage);
-    uploadTask.on(
-      firebase.storage.TaskEvent.STATE_CHANGED,
-      next,
-      error,
-      complete
-    );
   };
-
-  const next = (snapshot: any) => {
-    const percent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    console.log(percent + "% done");
-  };
-
-  const error = (err: any) => console.log(err);
-
-  const complete = () => {
-    storage
-      .ref("avatars")
-      .child(uuid)
-      .getDownloadURL()
-      .then((url) => {
-        setAvatarImageUrl(url);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const [openTip, setOpenTip] = useState(false);
-  const handleCloseTip = () => setOpenTip(false);
-  const handleClickButton = () => setOpenTip(true);
 
   return (
     <Card className={classes.root}>
@@ -169,7 +137,7 @@ const Profile = () => {
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Typography paragraph>設定</Typography>
-          <form style={{ lineHeight: 4 }}>
+          <form style={{ lineHeight: 5 }}>
             <Grid
               container
               direction="row"
@@ -194,64 +162,54 @@ const Profile = () => {
                 <Button onClick={changeName}>変更</Button>
               </Grid>
             </Grid>
-            <div style={{ marginTop: 10 }}>
+            <form onSubmit={uploadAvatar}>
               <input
                 id="contained-button-file"
                 multiple
                 type="file"
+                onChange={onImageSubmit}
                 style={{ display: "none" }}
               />
-              {/* <label htmlFor="contained-button-file"> */}
-              <Button
-                onClick={onImageSubmit}
-                variant="outlined"
-                component="span"
-                fullWidth
-              >
-                画像アップロード
-              </Button>
-              {/* </label> */}
-              <Grid
-                container
-                direction="row"
-                justify="space-between"
-                alignItems="center"
-              >
-                <Grid item xs={9}>
-                  <TextField
-                    type="text"
-                    label="ID"
-                    disabled
-                    defaultValue={user && user.uid}
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={3}>
-                  <InputAdornment position="end">
-                    <Tooltip
-                      arrow
-                      open={openTip}
-                      onClose={handleCloseTip}
-                      disableHoverListener
-                      placement="top"
-                      title="Copied!"
-                    >
-                      <CopyToClipBoard text={user && user.uid}>
-                        <IconButton onClick={handleClickButton}>
-                          <AssignmentIcon />
-                        </IconButton>
-                      </CopyToClipBoard>
-                    </Tooltip>
-                  </InputAdornment>
-                </Grid>
+              <label htmlFor="contained-button-file">
+                <Button variant="outlined" component="span" fullWidth>
+                  画像アップロード
+                </Button>
+              </label>
+            </form>
+            <Grid
+              container
+              direction="row"
+              justify="space-between"
+              alignItems="center"
+            >
+              <Grid item xs={9}>
+                <TextField
+                  type="text"
+                  label="ID"
+                  disabled
+                  defaultValue={user && user.uid}
+                  fullWidth
+                />
               </Grid>
-            </div>
-            <input
-              id="contained-button-file"
-              multiple
-              type="file"
-              style={{ display: "none" }}
-            />
+              <Grid item xs={3}>
+                <InputAdornment position="end">
+                  <Tooltip
+                    arrow
+                    open={openTip}
+                    onClose={handleCloseTip}
+                    disableHoverListener
+                    placement="top"
+                    title="Copied!"
+                  >
+                    <CopyToClipBoard text={user && user.uid}>
+                      <IconButton onClick={handleClickButton}>
+                        <AssignmentIcon />
+                      </IconButton>
+                    </CopyToClipBoard>
+                  </Tooltip>
+                </InputAdornment>
+              </Grid>
+            </Grid>
           </form>
           <Button
             onClick={() => {
