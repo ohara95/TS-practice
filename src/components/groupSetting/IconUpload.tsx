@@ -8,6 +8,7 @@ type Props = {
   iconFile: File;
   setIconFile: (e: File) => void;
 };
+
 const IconUpload: FC<Props> = ({ setIcon, iconFile, setIconFile }) => {
   const fileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files !== null) {
@@ -25,7 +26,6 @@ const IconUpload: FC<Props> = ({ setIcon, iconFile, setIconFile }) => {
     <form onSubmit={iconUpload}>
       <input
         id="contained-button-file"
-        multiple
         type="file"
         onChange={fileUpload}
         style={{ display: "none" }}

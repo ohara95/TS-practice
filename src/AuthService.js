@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { auth, db } from "./config/firebase";
-import { groupsData, currentGroupData } from "./atoms_recoil";
+import { groupsData, currentGroupId } from "./atoms_recoil";
 import { useSetRecoilState } from "recoil";
 
 export const AuthContext = React.createContext();
@@ -8,9 +8,8 @@ export const AuthContext = React.createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
-  // const [groups, setGroups] = useState([]);
   const setGroups = useSetRecoilState(groupsData);
-  const setCurrentGroup = useSetRecoilState(currentGroupData);
+  const setCurrentId = useSetRecoilState(currentGroupId);
 
   useEffect(() => {
     auth.onAuthStateChanged((dbUser) => setUser(dbUser));
@@ -39,7 +38,7 @@ export const AuthProvider = ({ children }) => {
               id: doc.id,
             };
           });
-          setCurrentGroup(groupContent[0]);
+          setCurrentId(groupContent[0].id);
           setGroups(groupContent);
         });
     }
