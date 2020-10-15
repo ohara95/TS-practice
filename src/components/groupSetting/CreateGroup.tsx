@@ -1,10 +1,7 @@
 import React, { FC, useContext } from "react";
 import firebase, { db } from "../../config/firebase";
 import { AuthContext } from "../../AuthService";
-
-// material
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
+import CustomForm from "../molecules/CustomForm";
 
 type Props = {
   groupName: string;
@@ -26,16 +23,15 @@ const CreateGroup: FC<Props> = ({ groupName, setGroupName }) => {
   };
 
   return (
-    <form>
-      <TextField
-        value={groupName}
-        onChange={(e) => {
-          setGroupName(e.target.value);
-        }}
-        label="CreateRoom"
-      />
-      <Button onClick={addGroup}>作成</Button>
-    </form>
+    <CustomForm
+      value={groupName}
+      onChange={(e) => {
+        setGroupName(e.target.value);
+      }}
+      onClick={addGroup}
+      text="作成"
+      label="グループ作成"
+    />
   );
 };
 
