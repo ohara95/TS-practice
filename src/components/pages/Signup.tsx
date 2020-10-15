@@ -1,5 +1,5 @@
 import React from "react";
-import { auth } from "../../config/firebase";
+import firebase, { auth, db } from "../../config/firebase";
 import { useForm, Controller } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 
@@ -53,13 +53,33 @@ const Signup = () => {
       .createUserWithEmailAndPassword(data.email, data.confirmPassword)
       .then(() => {
         const user = auth.currentUser;
-        user?.updateProfile({
-          displayName: data.username,
-        });
+
+        user
+          ?.updateProfile({
+            displayName: data.username,
+          })
+          .then(() => {
+            db.collection("users").doc(user?.uid).set({
+              name: user?.displayName,
+              id: user?.uid,
+            });
+
+            db.collection("groups")
+              .doc()
+              .set({
+                groupName: "ホーム",
+                owner: user.uid,
+                users: firebase.firestore.FieldValue.arrayUnion(user.uid),
+                createdAt: new Date(),
+              });
+          });
         history.push("/");
       })
       .catch((e) => {
-        console.log(e, "signin");
+        if (e.code === "auth/email-already-in-use") {
+          return alert("登録済のアドレスです");
+        }
+        console.log(e, "signun");
       });
   };
 

@@ -1,36 +1,54 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useContext, useEffect } from "react";
 import { Picker } from "emoji-mart";
 import "emoji-mart/css/emoji-mart.css";
-import { Message } from "./type";
 import firebase, { storage } from "../../config/firebase";
+import { AuthContext } from "../../AuthService";
 
 //material
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 
-const Form: FC<Message> = ({ message, setMessage }) => {
+type DbMessage = {
+  content: string;
+  createdAt: firebase.firestore.Timestamp;
+  groupId: any[];
+  // image:string;
+  user: any[];
+  id: string;
+};
+
+type Message = {
+  message: string;
+  setMessage: (param: string) => void;
+  setMessageList: (param: DbMessage[]) => void;
+};
+
+const Form: FC<Message> = ({ message, setMessage, setMessageList }) => {
   const [selectEmoji, setSelectEmoji] = useState(false);
   const db = firebase.firestore();
+  const { currentGroup, user } = useContext(AuthContext);
 
   //---emoji---//
   const handleEmojiOpen = () => {
     setSelectEmoji(!selectEmoji);
   };
-
   const onEmojiSelect = (emoji: any) => {
     setMessage(message + emoji.native);
   };
   //--emoji--//
 
   const handleClickTweet = () => {
-    // const userRef = db.collection("users").doc(user.uid);
-    db.collection("chat").doc().set({
-      createdAt: new Date(),
-      content: message,
-      // image: imageUrl,
-      // groupId: currentGroup,
-      // createUser: userRef,
-    });
+    const userRef = db.collection("users").doc(user.uid);
+    db.collection("chat")
+      .doc()
+      .set({
+        createdAt: new Date(),
+        content: message,
+        // image: imageUrl,
+        groupId: db.doc(`groups/${currentGroup}`),
+        user: userRef,
+      });
+    setMessage("");
   };
 
   return (

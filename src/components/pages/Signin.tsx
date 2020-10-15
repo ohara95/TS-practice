@@ -55,6 +55,9 @@ const Signin = () => {
         history.push("/");
       })
       .catch((e) => {
+        if (e.code === "auth/wrong-password") {
+          return alert("パスワードが無効です");
+        }
         console.log(e, "signin");
       });
   };

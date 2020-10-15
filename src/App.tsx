@@ -4,18 +4,22 @@ import { AuthProvider } from "./AuthService";
 import Signin from "./components/pages/Signin";
 import Signup from "./components/pages/Signup";
 import Top from "./components/pages/Top";
+import LoggedInRoute from "./LoggedInRoute";
+import { RecoilRoot } from "recoil";
 
 const App = () => {
   return (
+    // <RecoilRoot>
     <AuthProvider>
       <Router>
         <Switch>
-          <Route exact path="/" component={Top} />
-          <Route path="/Signin" component={Signin} />
-          <Route path="/Signup" component={Signup} />
+          <LoggedInRoute exact path="/" component={Top} />
+          <Route path="/signin" component={Signin} />
+          <Route path="/signup" component={Signup} />
         </Switch>
       </Router>
     </AuthProvider>
+    // </RecoilRoot>
   );
 };
 

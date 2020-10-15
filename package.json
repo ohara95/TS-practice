@@ -14,6 +14,8 @@
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@types/react-router-dom": "^5.1.6",
+    "@types/uuid": "^8.3.0",
+    "date-fns": "^2.16.1",
     "emoji-mart": "^3.0.0",
     "firebase": "^7.23.0",
     "react": "^16.13.1",
@@ -23,7 +25,8 @@
     "react-scripts": "3.4.3",
     "recoil": "^0.0.13",
     "typescript": "~3.7.2",
-    "typesync": "^0.7.0"
+    "typesync": "^0.7.0",
+    "uuid": "^8.3.1"
   },
   "scripts": {
     "start": "react-scripts start",
