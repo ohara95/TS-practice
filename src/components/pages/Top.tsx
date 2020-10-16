@@ -2,7 +2,7 @@ import React from "react";
 //component
 import Chat from "../chat";
 import Profile from "../Profile";
-import GroupList from "../displayGroup/GroupList";
+import GroupList from "../displayGroup/index";
 import Header from "../Header";
 // material
 import { makeStyles } from "@material-ui/core/styles";
