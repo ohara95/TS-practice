@@ -26,6 +26,8 @@ const IconUpload: FC<Props> = ({ icon, setIcon }) => {
     }
   }, [icon]);
 
+  console.log(icon);
+
   return (
     <form>
       <input

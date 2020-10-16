@@ -2,19 +2,12 @@ import React, { useState, useEffect } from "react";
 import { db } from "../../config/firebase";
 import Form from "./Form";
 import Lists from "./Lists";
-
-type DbMessage = {
-  content: string;
-  createdAt: firebase.firestore.Timestamp;
-  groupId: any[];
-  // image:string;
-  user: any[];
-  id: string;
-};
+import { DbMessage } from "./type";
 
 const App = () => {
   const [message, setMessage] = useState("");
   const [messageList, setMessageList] = useState<DbMessage[]>([]);
+  const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
     db.collection("chat")
@@ -38,7 +31,9 @@ const App = () => {
 
   return (
     <>
-      <Form {...{ message, setMessage, setMessageList }} />
+      <Form
+        {...{ message, setMessage, setMessageList, imageUrl, setImageUrl }}
+      />
       <Lists {...{ messageList }} />
     </>
   );

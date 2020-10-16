@@ -59,6 +59,9 @@ const Signin = () => {
         if (e.code === "auth/wrong-password") {
           return alert("パスワードが無効です");
         }
+        if (e.code === "auth/too-many-requests") {
+          return alert("しばらく時間をおいて再度お試しください");
+        }
         console.log(e, "signin");
       });
   };

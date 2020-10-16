@@ -1,6 +1,5 @@
 import React, { FC } from "react";
-//component
-import CreateGroup from "../groupSetting";
+
 //material
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
@@ -9,7 +8,6 @@ import Fade from "@material-ui/core/Fade";
 import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
 import Grid from "@material-ui/core/Grid";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -35,9 +33,10 @@ type Props = {
   close: (param: boolean) => void;
   title: string;
   src?: string;
+  render?: JSX.Element;
 };
 
-const GroupModal: FC<Props> = ({ open, close, title, src }) => {
+const GroupModal: FC<Props> = ({ open, close, title, src, render }) => {
   const classes = useStyles();
 
   return (
@@ -64,8 +63,7 @@ const GroupModal: FC<Props> = ({ open, close, title, src }) => {
             <Typography>{title}</Typography>
             <Avatar aria-label="recipe" className={classes.large} src={src} />
           </Grid>
-
-          <CreateGroup />
+          {render}
         </div>
       </Fade>
     </Modal>
