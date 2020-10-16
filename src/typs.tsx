@@ -6,4 +6,5 @@ export type Group = {
   owner: any;
   users: any[];
   id: string;
+  iconUrl: string;
 };

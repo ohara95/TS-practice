@@ -9,14 +9,13 @@ const App = () => {
   const [editGroupName, setEditGroupName] = useState("");
   const [invitationCode, setInvitationCode] = useState("");
   const [icon, setIcon] = useState("");
-  const [iconFile, setIconFile] = useState();
 
   return (
     <div style={{ lineHeight: 5 }}>
       <CreateGroup {...{ groupName, setGroupName }} />
       <EditGroup {...{ editGroupName, setEditGroupName }} />
       <InvitationGroup {...{ invitationCode, setInvitationCode }} />
-      <IconUpload {...{ setIcon, iconFile, setIconFile }} />
+      <IconUpload {...{ icon, setIcon }} />
     </div>
   );
 };

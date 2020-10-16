@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { AuthContext } from "../AuthService";
 import firebase, { db, storage, auth } from "../config/firebase";
 import defaultUser from "../img/user.jpg";
-import { uploadTask } from "../utils/imageUpload";
+import { handleCloudUpload } from "../utils/imageUpload";
 // import { next, error, complete } from "../utils/imageUpload";
 //material
 import { makeStyles } from "@material-ui/core/styles";
@@ -108,7 +108,7 @@ const Profile = () => {
     if (!avatarImage) {
       return alert("ファイルを選択されていません");
     } else {
-      uploadTask("avatars", avatarImage, setAvatarImageUrl);
+      handleCloudUpload("avatars", avatarImage);
     }
   };
 

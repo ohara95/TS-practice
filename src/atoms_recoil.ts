@@ -17,3 +17,8 @@ export const currentGroupId = atom({
   key: "currentGroupId",
   default: "",
 });
+
+// export const iconData = atom({
+//   key: "iconData",
+//   default: "",
+// });
