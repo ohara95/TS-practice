@@ -62,6 +62,7 @@ const Signup = () => {
             db.collection("users").doc(user?.uid).set({
               name: user?.displayName,
               id: user?.uid,
+              avatarUrl: "",
             });
 
             db.collection("groups")

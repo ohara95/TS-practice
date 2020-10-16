@@ -1,8 +1,10 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../AuthService";
-import firebase, { db, storage, auth } from "../config/firebase";
+import firebase, { db, auth } from "../config/firebase";
 import defaultUser from "../img/user.jpg";
 import { handleCloudUpload } from "../utils/imageUpload";
+import { currentGroupId, usersData } from "../atoms_recoil";
+import { useRecoilValue } from "recoil";
 // import { next, error, complete } from "../utils/imageUpload";
 //material
 import { makeStyles } from "@material-ui/core/styles";
@@ -51,24 +53,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// type Users = {
-//   name: string;
-//   id: string;
-// };
-
-// type Context = {
-//   user: firebase.User | null;
-//   users: Users[];
-// };
-
 const Profile = () => {
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
   const [username, setUsername] = useState("");
-  const [avatarImage, setAvatarImage] = useState<File>();
-  const [avatarUrl, setAvatarImageUrl] = useState("");
+  const [avatar, setAvatar] = useState("");
   const [openTip, setOpenTip] = useState(false);
-  const { user, users } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
+  const users = useRecoilValue(usersData);
 
   const handleExpandClick = () => setExpanded(!expanded);
   const handleCloseTip = () => setOpenTip(false);
@@ -99,22 +91,33 @@ const Profile = () => {
 
   const onImageSubmit = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files !== null) {
-      const file = e.target.files[0];
-      setAvatarImage(file);
+      if (e.target.files !== null) {
+        const file = e.target.files[0];
+        handleCloudUpload("icons", file, setAvatar);
+      }
     }
   };
 
-  const uploadAvatar = () => {
-    if (!avatarImage) {
-      return alert("ファイルを選択されていません");
-    } else {
-      handleCloudUpload("avatars", avatarImage);
+  useEffect(() => {
+    if (avatar) {
+      db.collection("users").doc(user.uid).update({ avatarUrl: avatar });
+    }
+  }, [avatar]);
+
+  const displayUser = () => {
+    if (users && user) {
+      return users.find((dbUser) => dbUser.id === user.uid);
     }
   };
 
   return (
     <Card className={classes.root}>
-      <CardMedia className={classes.media} image={defaultUser} />
+      <CardMedia
+        className={classes.media}
+        image={
+          displayUser()?.avatarUrl ? displayUser()?.avatarUrl : defaultUser
+        }
+      />
       <CardHeader title={displayName()} />
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">
@@ -162,7 +165,7 @@ const Profile = () => {
                 <Button onClick={changeName}>変更</Button>
               </Grid>
             </Grid>
-            <form onSubmit={uploadAvatar}>
+            <form>
               <input
                 id="contained-button-file"
                 type="file"

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
-import { currentGroupId, groupsData } from "../atoms_recoil";
+import { currentGroupId, groupsData, usersData } from "../atoms_recoil";
+import { Users } from "../typs";
 //component
 import GroupModal from "../components/organisms/GroupModal";
+import UserList from "./UserList";
 // material
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -58,14 +60,16 @@ const Header = () => {
   const [open, setOpen] = useState(false);
   const currentId = useRecoilValue(currentGroupId);
   const groups = useRecoilValue(groupsData);
+  const dbUsers = useRecoilValue(usersData);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  useEffect(() => {}, []);
   const groupContext = () => {
     return groups.find((group) => group.id === currentId);
   };
+
+  const groupUsers = groups.find((group) => group.users);
 
   return (
     <>
@@ -86,13 +90,21 @@ const Header = () => {
           >
             {groupContext()?.groupName}
           </Typography>
-          {/** 参加メンバーのアイコン */}
           <AvatarGroup max={4}>
-            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-            <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
-            <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-            <Avatar alt="Agnes Walker" src="/static/images/avatar/4.jpg" />
-            <Avatar alt="Trevor Henderson" src="/static/images/avatar/5.jpg" />
+            {groupUsers?.users.map((user) => {
+              if (dbUsers) {
+                return dbUsers.map((fireStoreUser) => {
+                  if (fireStoreUser.id === user) {
+                    return (
+                      <Avatar
+                        alt={fireStoreUser.name}
+                        src={fireStoreUser.avatarUrl}
+                      />
+                    );
+                  }
+                });
+              }
+            })}
           </AvatarGroup>
           <IconButton color="inherit" onClick={handleOpen}>
             <Badge color="secondary">

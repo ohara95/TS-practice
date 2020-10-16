@@ -1,6 +1,6 @@
 import React from "react";
-import { groupsData, currentGroupId } from "../../atoms_recoil";
-import { useRecoilValue, useRecoilState } from "recoil";
+import { groupsData } from "../../atoms_recoil";
+import { useRecoilValue } from "recoil";
 import CurrentGroup from "./CurrentGroup";
 import { Group } from "../../typs";
 
@@ -35,7 +35,6 @@ const GroupList = () => {
               id={group.id}
               name={group.groupName}
               icon={group.iconUrl}
-              groups={groups}
             />
           ))}
       </List>
