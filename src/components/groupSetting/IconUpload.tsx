@@ -1,10 +1,9 @@
-import React, { FC, useContext } from "react";
+import React, { FC, useEffect } from "react";
 import Button from "@material-ui/core/Button";
 import { handleCloudUpload } from "../../utils/imageUpload";
-import { currentGroupId, groupsData } from "../../atoms_recoil";
-import { useRecoilValue, useRecoilState } from "recoil";
+import { currentGroupId } from "../../atoms_recoil";
+import { useRecoilValue } from "recoil";
 import { db } from "../../config/firebase";
-import { AuthContext } from "../../AuthService";
 
 type Props = {
   icon: string;
@@ -13,7 +12,6 @@ type Props = {
 
 const IconUpload: FC<Props> = ({ icon, setIcon }) => {
   const currentId = useRecoilValue(currentGroupId);
-  const { user } = useContext(AuthContext);
 
   const fileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files !== null) {
@@ -21,11 +19,12 @@ const IconUpload: FC<Props> = ({ icon, setIcon }) => {
       handleCloudUpload("icons", file, setIcon);
     }
   };
-  if (icon) {
-    console.log(currentId);
-    console.log(user);
-    db.collection("groups").doc(currentId).update({ iconUrl: icon });
-  }
+
+  useEffect(() => {
+    if (icon) {
+      db.collection("groups").doc(currentId).update({ iconUrl: icon });
+    }
+  }, [icon]);
 
   return (
     <form>

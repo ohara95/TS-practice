@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
 import { currentGroupId, groupsData } from "../atoms_recoil";
 //component
@@ -62,6 +62,7 @@ const Header = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  useEffect(() => {}, []);
   const groupContext = () => {
     return groups.find((group) => group.id === currentId);
   };
