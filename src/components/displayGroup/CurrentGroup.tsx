@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { currentGroupId } from "../../atoms_recoil";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { Group } from "../../typs";
 
 import ListItem from "@material-ui/core/ListItem";
@@ -19,15 +19,12 @@ const useStyles = makeStyles((theme: Theme) =>
 type Props = {
   id: string;
   name: string;
-  groups: Group[];
   icon: string;
 };
 
-const CurrentGroup: FC<Props> = ({ id, name, groups, icon }) => {
+const CurrentGroup: FC<Props> = ({ id, name, icon }) => {
   const classes = useStyles();
-  const [currentId, setCurrentId] = useRecoilState(currentGroupId);
-
-  console.log(currentId);
+  const setCurrentId = useSetRecoilState(currentGroupId);
 
   return (
     <>
