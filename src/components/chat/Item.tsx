@@ -1,7 +1,9 @@
-import React, { FC, useContext } from "react";
+import React, { FC, useEffect, useContext } from "react";
 import firebase, { db } from "../../config/firebase";
 import { AuthContext } from "../../AuthService";
 import { format } from "date-fns";
+import { useRecoilValue } from "recoil";
+import { usersData } from "../../atoms_recoil";
 
 // material
 import { makeStyles } from "@material-ui/core/styles";
@@ -12,7 +14,7 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import CloseIcon from "@material-ui/icons/Close";
+import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 
 const useStyles = makeStyles((theme) => ({
@@ -30,18 +32,20 @@ type Props = {
   content: string;
   id: string;
   createdAt: firebase.firestore.Timestamp;
+  // userRef: any;
 };
 
 const Item: FC<Props> = ({ content, id, createdAt }) => {
   const classes = useStyles();
+  const users = useRecoilValue(usersData);
+  const { user } = useContext(AuthContext);
 
-  const { user, users } = useContext(AuthContext);
+  // const userData = userRef.get().then((response: any) => response.ref);
+  // console.log(userData);
 
   const displayName = () => {
     if (users && user) {
-      const findUser = users.find(
-        (storeUser: any) => storeUser.id === user.uid
-      );
+      const findUser = users.find((storeUser) => storeUser.id === user.uid);
       if (findUser) {
         return findUser.name;
       }
@@ -62,7 +66,6 @@ const Item: FC<Props> = ({ content, id, createdAt }) => {
     //   storage.refFromURL(imageUrl).delete();
     // }
   };
-
   return (
     <>
       <ListItem alignItems="flex-start">
@@ -99,7 +102,7 @@ const Item: FC<Props> = ({ content, id, createdAt }) => {
             aria-label="delete"
             size="small"
           >
-            <CloseIcon />
+            <DeleteIcon />
           </IconButton>
         </Typography>
       </ListItem>

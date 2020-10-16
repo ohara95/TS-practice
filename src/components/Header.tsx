@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
 import { currentGroupId, groupsData, usersData } from "../atoms_recoil";
-import { Users } from "../typs";
+
 //component
-import GroupModal from "../components/organisms/GroupModal";
-import UserList from "./UserList";
+import CustomModal from "./organisms/CustomModal";
+import GroupSetting from "./groupSetting";
 // material
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -17,7 +17,6 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import Avatar from "@material-ui/core/Avatar";
 import AvatarGroup from "@material-ui/lab/AvatarGroup";
 import { deepOrange } from "@material-ui/core/colors";
-import DraftsIcon from "@material-ui/icons/Drafts";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -65,10 +64,7 @@ const Header = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const groupContext = () => {
-    return groups.find((group) => group.id === currentId);
-  };
-
+  const groupContext = () => groups.find((group) => group.id === currentId);
   const groupUsers = groups.find((group) => group.users);
 
   return (
@@ -111,7 +107,8 @@ const Header = () => {
               <MoreVertIcon />
             </Badge>
           </IconButton>
-          <GroupModal
+          <CustomModal
+            render={<GroupSetting />}
             open={open}
             close={handleClose}
             title="グループ設定"

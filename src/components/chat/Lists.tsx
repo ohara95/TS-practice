@@ -2,6 +2,7 @@ import React, { FC } from "react";
 import Item from "./Item";
 import List from "@material-ui/core/List";
 import { makeStyles } from "@material-ui/core/styles";
+import { DbMessage } from "./type";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -9,14 +10,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type DbMessage = {
-  content: string;
-  createdAt: firebase.firestore.Timestamp;
-  groupId: any[];
-  // image:string;
-  user: any[];
-  id: string;
-};
 type Props = {
   messageList: DbMessage[];
   // setMessageList: (param: DbMessage[]) => void;
@@ -36,6 +29,7 @@ const Lists: FC<Props> = ({ messageList }) => {
               content={list.content}
               id={list.id}
               createdAt={list.createdAt}
+              // userRef={list.user}
             />
           </List>
         );

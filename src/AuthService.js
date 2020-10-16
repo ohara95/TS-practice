@@ -7,7 +7,7 @@ export const AuthContext = React.createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isCurrentIdOrNot, setIsCurrentIdOrNot] = useState(false);
+  const [isCurrentId, setIsCurrentId] = useState(false);
   const [groups, setGroups] = useRecoilState(groupsData);
   const setCurrentId = useSetRecoilState(currentGroupId);
   const setUsers = useSetRecoilState(usersData);
@@ -43,14 +43,14 @@ export const AuthProvider = ({ children }) => {
             };
           });
           setGroups(groupContent);
-          setIsCurrentIdOrNot(true);
+          setIsCurrentId(true);
         });
     }
   }, [user]);
 
   useEffect(() => {
-    if (isCurrentIdOrNot) setCurrentId(groups[0].id);
-  }, [isCurrentIdOrNot]);
+    if (isCurrentId) setCurrentId(groups[0].id);
+  }, [isCurrentId]);
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>

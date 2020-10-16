@@ -98,6 +98,8 @@ const Profile = () => {
     }
   };
 
+  console.log(avatar);
+
   useEffect(() => {
     if (avatar) {
       db.collection("users").doc(user.uid).update({ avatarUrl: avatar });

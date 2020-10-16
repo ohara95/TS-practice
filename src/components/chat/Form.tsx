@@ -1,19 +1,23 @@
 import React, { FC, useState, useContext, useEffect } from "react";
 import { Picker } from "emoji-mart";
 import "emoji-mart/css/emoji-mart.css";
-import firebase, { storage } from "../../config/firebase";
+import { db } from "../../config/firebase";
 import { AuthContext } from "../../AuthService";
 import { currentGroupId } from "../../atoms_recoil";
 import { useRecoilValue } from "recoil";
+import { handleCloudUpload } from "../../utils/imageUpload";
+import { DbMessage } from "./type";
+import ImageDialog from "../organisms/ImageDialog";
 
 //material
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
-import clsx from "clsx";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import IconButton from "@material-ui/core/IconButton";
-import AccountCircle from "@material-ui/icons/AccountCircle";
+import SentimentSatisfiedAltIcon from "@material-ui/icons/SentimentSatisfiedAlt";
+import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
+import RecordVoiceOverIcon from "@material-ui/icons/RecordVoiceOver";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -36,35 +40,25 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-type DbMessage = {
-  content: string;
-  createdAt: firebase.firestore.Timestamp;
-  groupId: any[];
-  // image:string;
-  user: any[];
-  id: string;
-};
-
 type Message = {
   message: string;
   setMessage: (param: string) => void;
   setMessageList: (param: DbMessage[]) => void;
+  imageUrl: string;
+  setImageUrl: (param: string) => void;
 };
 
-const Form: FC<Message> = ({ message, setMessage, setMessageList }) => {
+const Form: FC<Message> = ({ message, setMessage, imageUrl, setImageUrl }) => {
   const [selectEmoji, setSelectEmoji] = useState(false);
-  const db = firebase.firestore();
+  const [open, setOpen] = useState(false);
+
   const { user } = useContext(AuthContext);
   const currentId = useRecoilValue(currentGroupId);
   const classes = useStyles();
 
   //---emoji---//
-  const handleEmojiOpen = () => {
-    setSelectEmoji(!selectEmoji);
-  };
-  const onEmojiSelect = (emoji: any) => {
-    setMessage(message + emoji.native);
-  };
+  const handleEmojiOpen = () => setSelectEmoji(!selectEmoji);
+  const onEmojiSelect = (emoji: any) => setMessage(message + emoji.native);
   //--emoji--//
 
   const handleClickTweet = () => {
@@ -77,13 +71,30 @@ const Form: FC<Message> = ({ message, setMessage, setMessageList }) => {
         .set({
           createdAt: new Date(),
           content: message,
-          // image: imageUrl,
+          image: imageUrl,
           groupId: db.doc(`groups/${currentId}`),
           user: userRef,
         });
       setMessage("");
     }
   };
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  // memo 複数画像検討
+  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files !== null) {
+      const file = e.target.files[0];
+      handleCloudUpload("images", file, setImageUrl);
+    }
+  };
+
+  // useEffect(()=>{
+  //   if(imageUrl){
+  //     db.collection('chat').id()
+  //   }
+  // },[imageUrl])
 
   return (
     <>
@@ -99,19 +110,25 @@ const Form: FC<Message> = ({ message, setMessage, setMessageList }) => {
               rows={5}
               fullWidth
               variant="outlined"
-              InputProps={{
-                endAdornment: (
-                  <IconButton edge="end" style={{ fontSize: 15 }}>
-                    つぶやく
-                  </IconButton>
-                ),
-              }}
+              // InputProps={{
+              //   endAdornment: (
+              //     <IconButton edge="end" style={{ fontSize: 15 }}>
+              //       つぶやく
+              //     </IconButton>
+              //   ),
+              // }}
             />
           </Grid>
           <Grid item>
-            <Button>しゃしん</Button>
-            <Button onClick={handleEmojiOpen}>えもじ</Button>
-            <Button onClick={handleClickTweet}>つぶやく</Button>
+            <IconButton aria-label="image" onClick={handleOpen}>
+              <AddAPhotoIcon />
+            </IconButton>
+            <IconButton aria-label="emoji" onClick={handleEmojiOpen}>
+              <SentimentSatisfiedAltIcon />
+            </IconButton>
+            <IconButton aria-label="tweet" onClick={handleClickTweet}>
+              <RecordVoiceOverIcon />
+            </IconButton>
             {selectEmoji && (
               <Picker
                 onClick={(emoji) => onEmojiSelect({ ...emoji, selectEmoji })}
@@ -142,6 +159,12 @@ const Form: FC<Message> = ({ message, setMessage, setMessageList }) => {
             )}
           </Grid>
         </Grid>
+        <ImageDialog
+          onClick={handleClose}
+          open={open}
+          title="画像アップロード"
+          onChange={handleImage}
+        />
       </form>
     </>
   );
