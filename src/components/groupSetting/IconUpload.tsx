@@ -1,29 +1,34 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 import Button from "@material-ui/core/Button";
-import { uploadTask } from "../../utils/imageUpload";
+import { handleCloudUpload } from "../../utils/imageUpload";
+import { currentGroupId, groupsData } from "../../atoms_recoil";
+import { useRecoilValue, useRecoilState } from "recoil";
+import { db } from "../../config/firebase";
+import { AuthContext } from "../../AuthService";
 
 type Props = {
-  // icon: string;
+  icon: string;
   setIcon: (e: string) => void;
-  iconFile: File;
-  setIconFile: (e: File) => void;
 };
 
-const IconUpload: FC<Props> = ({ setIcon, iconFile, setIconFile }) => {
+const IconUpload: FC<Props> = ({ icon, setIcon }) => {
+  const currentId = useRecoilValue(currentGroupId);
+  const { user } = useContext(AuthContext);
+
   const fileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files !== null) {
       const file = e.target.files[0];
-      setIconFile(file);
+      handleCloudUpload("icons", file, setIcon);
     }
   };
-  const iconUpload = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("icons", iconFile);
+  if (icon) {
+    console.log(currentId);
+    console.log(user);
+    db.collection("groups").doc(currentId).update({ iconUrl: icon });
+  }
 
-    uploadTask("icons", iconFile, setIcon);
-  };
   return (
-    <form onSubmit={iconUpload}>
+    <form>
       <input
         id="contained-button-file"
         type="file"

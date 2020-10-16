@@ -11,6 +11,9 @@ type Props = {
 const CreateGroup: FC<Props> = ({ groupName, setGroupName }) => {
   const { user } = useContext(AuthContext);
   const addGroup = () => {
+    if (!groupName) {
+      return alert("入力してください");
+    }
     setGroupName("");
     db.collection("groups")
       .doc()
@@ -19,6 +22,7 @@ const CreateGroup: FC<Props> = ({ groupName, setGroupName }) => {
         owner: user.uid,
         users: firebase.firestore.FieldValue.arrayUnion(user.uid),
         createdAt: new Date(),
+        iconUrl: "",
       });
   };
 

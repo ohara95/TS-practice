@@ -13,11 +13,7 @@ import Grid from "@material-ui/core/Grid";
 import clsx from "clsx";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import IconButton from "@material-ui/core/IconButton";
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import FormControl from "@material-ui/core/FormControl";
-import Visibility from "@material-ui/icons/Visibility";
+import AccountCircle from "@material-ui/icons/AccountCircle";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -33,6 +29,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     textField: {
       width: "25ch",
+    },
+    marginSpace: {
+      margin: theme.spacing(1),
     },
   })
 );
@@ -88,21 +87,6 @@ const Form: FC<Message> = ({ message, setMessage, setMessageList }) => {
 
   return (
     <>
-      {/* これ参考にForm内にボタン入れたい */}
-      {/* <FormControl className={clsx(classes.margin, classes.textField)}>
-        <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
-        <Input
-          id="standard-adornment-password"
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton aria-label="toggle password visibility">
-                <Visibility />
-              </IconButton>
-            </InputAdornment>
-          }
-        />
-      </FormControl>
- */}
       <form>
         <Grid container direction="column" justify="flex-start">
           <Grid item>
@@ -115,6 +99,13 @@ const Form: FC<Message> = ({ message, setMessage, setMessageList }) => {
               rows={5}
               fullWidth
               variant="outlined"
+              InputProps={{
+                endAdornment: (
+                  <IconButton edge="end" style={{ fontSize: 15 }}>
+                    つぶやく
+                  </IconButton>
+                ),
+              }}
             />
           </Grid>
           <Grid item>

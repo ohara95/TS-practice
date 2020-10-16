@@ -7,6 +7,9 @@ type Props = {
 };
 const InvitationGroup: FC<Props> = ({ invitationCode, setInvitationCode }) => {
   const inventMenber = () => {
+    if (!invitationCode) {
+      return alert("入力してください");
+    }
     setInvitationCode("");
   };
   return (

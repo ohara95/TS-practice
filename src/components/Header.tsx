@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useRecoilValue } from "recoil";
 import { currentGroupId, groupsData } from "../atoms_recoil";
 //component
@@ -48,19 +48,22 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
   },
+  groupIcon: {
+    marginRight: 10,
+  },
 }));
 
 const Header = () => {
   const classes = useStyles();
+  const [open, setOpen] = useState(false);
   const currentId = useRecoilValue(currentGroupId);
   const groups = useRecoilValue(groupsData);
-  const [open, setOpen] = React.useState(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const displayGroupName = () => {
-    return groups.find((group) => group.id === currentId)?.groupName;
+  const groupContext = () => {
+    return groups.find((group) => group.id === currentId);
   };
 
   return (
@@ -68,6 +71,11 @@ const Header = () => {
       <CssBaseline />
       <AppBar position="absolute">
         <Toolbar className={classes.toolbar}>
+          <Avatar
+            alt="groupIcon"
+            src={groupContext()?.iconUrl}
+            className={classes.groupIcon}
+          />
           <Typography
             component="h1"
             variant="h6"
@@ -75,7 +83,7 @@ const Header = () => {
             noWrap
             className={classes.title}
           >
-            {displayGroupName()}
+            {groupContext()?.groupName}
           </Typography>
           {/** 参加メンバーのアイコン */}
           <AvatarGroup max={4}>
@@ -90,7 +98,12 @@ const Header = () => {
               <MoreVertIcon />
             </Badge>
           </IconButton>
-          <GroupModal open={open} close={handleClose} title="グループ設定" />
+          <GroupModal
+            open={open}
+            close={handleClose}
+            title="グループ設定"
+            src={groupContext()?.iconUrl}
+          />
         </Toolbar>
       </AppBar>
     </>

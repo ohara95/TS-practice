@@ -8,6 +8,7 @@ import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
+import Grid from "@material-ui/core/Grid";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -23,8 +24,8 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(2, 4, 3),
     },
     large: {
-      width: theme.spacing(7),
-      height: theme.spacing(7),
+      width: theme.spacing(10),
+      height: theme.spacing(10),
     },
   })
 );
@@ -33,9 +34,10 @@ type Props = {
   open: boolean;
   close: (param: boolean) => void;
   title: string;
+  src?: string;
 };
 
-const GroupModal: FC<Props> = ({ open, close, title }) => {
+const GroupModal: FC<Props> = ({ open, close, title, src }) => {
   const classes = useStyles();
 
   return (
@@ -53,10 +55,15 @@ const GroupModal: FC<Props> = ({ open, close, title }) => {
     >
       <Fade in={open}>
         <div className={classes.paper}>
-          <Typography>{title}</Typography>
-          <Avatar aria-label="recipe" className={classes.large}>
-            <AccountCircleIcon />
-          </Avatar>
+          <Grid
+            container
+            direction="column"
+            justify="center"
+            alignItems="center"
+          >
+            <Typography>{title}</Typography>
+            <Avatar aria-label="recipe" className={classes.large} src={src} />
+          </Grid>
 
           <CreateGroup />
         </div>

@@ -15,7 +15,9 @@ type Props = {
 const EditGroup: FC<Props> = ({ editGroupName, setEditGroupName }) => {
   const currentId = useRecoilValue(currentGroupId);
   const onBtnClick = () => {
-    if (!editGroupName) alert("グループ名を入力して下さい！");
+    if (!editGroupName) {
+      return alert("入力して下さい！");
+    }
 
     if (currentId) {
       db.collection("groups")
