@@ -1,8 +1,7 @@
-import React, { useContext } from "react";
-import firebase from "../../config/firebase";
-import { AuthContext } from "../../AuthService";
+import React, { FC } from "react";
+import { auth } from "../../config/firebase";
 import { useForm, Controller } from "react-hook-form";
-import { Link, Redirect, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 // material
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
@@ -12,6 +11,7 @@ import Grid from "@material-ui/core/Grid";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import { deepOrange } from "@material-ui/core/colors";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: deepOrange[300],
   },
   form: {
     width: "70%",
@@ -38,37 +38,27 @@ const useStyles = makeStyles((theme) => ({
 
 type UseForm = {
   email: string;
-  password: string;
 };
 
-const Signin = () => {
+const ResetPassword: FC = () => {
   const classes = useStyles();
-  const { errors, control, handleSubmit } = useForm<UseForm>();
-  const history = useHistory();
 
-  const { user } = useContext(AuthContext);
+  const { errors, handleSubmit, control } = useForm<UseForm>();
 
-  const onFormSubmit = (data: UseForm) => {
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(data.email, data.password)
-      .then(() => {
-        history.push("/");
-      })
-      .catch((e) => {
-        if (e.code === "auth/wrong-password") {
-          return alert("パスワードが無効です");
+  const onFromSubmit = (data: UseForm) => {
+    auth
+      .sendPasswordResetEmail(data.email)
+      .then(() => alert("メールを送信致しましたのでご確認をお願い致します"))
+      .catch((err) => {
+        if (err.code === "auth/invalid-email") {
+          return alert("アドレスが無効です");
         }
-        if (e.code === "auth/too-many-requests") {
-          return alert("しばらく時間をおいて再度お試しください");
+        if (err.code === "auth/user-not-found") {
+          return alert("ご記入頂いたアドレスの登録がございません");
         }
-        console.log(e, "signin");
+        console.log(err);
       });
   };
-
-  if (user) {
-    return <Redirect to="/" />;
-  }
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -80,10 +70,22 @@ const Signin = () => {
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              ログイン
+              パスワード再設定
+            </Typography>
+            <br />
+            <Typography variant="caption" display="block">
+              ※登録済のメールアドレスをご記入下さい。
+              <br />
+              <Typography variant="caption" display="block">
+                {" "}
+                &nbsp;&nbsp;確認メールを送信致します
+              </Typography>
+              <Typography variant="caption" display="block">
+                ※メールをご確認頂きパスワードの再設定をお願い致します。
+              </Typography>
             </Typography>
             <form
-              onSubmit={handleSubmit(onFormSubmit)}
+              onSubmit={handleSubmit(onFromSubmit)}
               className={classes.form}
               noValidate
             >
@@ -103,30 +105,11 @@ const Signin = () => {
                     name="email"
                     autoComplete="email"
                     autoFocus
+                    // color="deepOrange[300]"
                   />
                 }
               />
               {errors.email && <Typography>入力してください</Typography>}
-              <Controller
-                name="password"
-                defaultValue=""
-                control={control}
-                rules={{ required: true }}
-                as={
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    name="password"
-                    label="パスワード"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
-                  />
-                }
-              />
-              {errors.password && <Typography>入力してください</Typography>}
               <Button
                 type="submit"
                 fullWidth
@@ -134,14 +117,11 @@ const Signin = () => {
                 color="primary"
                 className={classes.submit}
               >
-                ログイン
+                送信
               </Button>
               <Grid container>
-                <Grid item xs>
-                  <Link to="/confirmpass">パスワードをお忘れですか？</Link>
-                </Grid>
                 <Grid item>
-                  <Link to="/signup">新規登録はこちら→</Link>
+                  <Link to="/signin">←ログイン画面へ</Link>
                 </Grid>
               </Grid>
             </form>
@@ -152,4 +132,4 @@ const Signin = () => {
   );
 };
 
-export default Signin;
+export default ResetPassword;
