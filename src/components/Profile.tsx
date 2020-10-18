@@ -77,11 +77,12 @@ const Profile = () => {
         .then()
         .catch((err) => console.log(err, "changeName"));
     }
+    setUsername("");
   };
-
+  //memo リロードしないとchat情報と同期しない
   const displayName = () => {
     if (users && user) {
-      const findUser = users.find((dbUser: any) => dbUser.id === user.uid);
+      const findUser = users.find((dbUser) => dbUser.id === user.uid);
       if (findUser) {
         return findUser.name;
       }

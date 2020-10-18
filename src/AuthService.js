@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
       const userPath = db.collection("users").doc(user.uid).path;
       const userRef = db.collection("users").doc(user.uid);
       db.collection("groups")
-        .where("users", "array-contains", userPath)
+        .where("users", "array-contains", userRef)
         .onSnapshot((snap) => {
           // console.log(3, "onSnapshot");
           const groupContent = snap.docs.map((doc) => {

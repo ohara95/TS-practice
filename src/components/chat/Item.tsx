@@ -59,25 +59,22 @@ const Item: FC<Props> = ({
   groupId,
 }) => {
   const classes = useStyles();
-  const users = useRecoilValue(usersData);
   const currentId = useRecoilValue(currentGroupId);
-  const { user } = useContext(AuthContext);
   const [userDetail, setUserDetail] = useState([]);
+  const [avatar, setAvatar] = useState("");
 
   useEffect(() => {
     userRef.get().then((res) => setUserDetail([...userDetail, res.data()]));
   }, []);
 
+  useEffect(() => {
+    userDetail.forEach((db) => setAvatar(db.avatarUrl));
+  }, [userDetail]);
+
   const deleteItem = (id: string) => {
     db.collection("chat").doc(id).delete();
-
     if (image) image.map((db) => storage.refFromURL(db.url).delete());
   };
-
-  //memo 何で全部出てくる？取り出せないし
-  // console.log(userDetail.find(({ avatarUrl }) => avatarUrl));
-
-  // console.log(image.find((db) => db.url));
 
   return (
     <>
@@ -85,9 +82,7 @@ const Item: FC<Props> = ({
         <>
           <ListItem alignItems="flex-start">
             <ListItemAvatar>
-              <Avatar
-                src={userDetail.find(({ avatarUrl }) => avatarUrl) as string}
-              />
+              <Avatar src={avatar && avatar} />
             </ListItemAvatar>
             <ListItemText
               primary={userDetail.map(({ name }) => name)}
