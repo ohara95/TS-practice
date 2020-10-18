@@ -1,40 +1,48 @@
 import React, { FC, useState, useContext, useEffect } from "react";
-import { db } from "../../config/firebase";
+import { db, storage } from "../../config/firebase";
 import { AuthContext } from "../../AuthService";
 import { currentGroupId } from "../../atoms_recoil";
 import { useRecoilValue } from "recoil";
 import { handleCloudUpload } from "../../utils/imageUpload";
-import { DbMessage } from "./type";
-import ImageDialog from "../organisms/ImageDialog";
+import { DbMessage, ImageArr } from "./type";
 import Emoji from "../../utils/Emoji";
+import { v4 } from "uuid";
 
 //material
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
+import InputBase from "@material-ui/core/InputBase";
+import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
+//icon
 import SentimentSatisfiedAltIcon from "@material-ui/icons/SentimentSatisfiedAlt";
-import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
+import PhotoSizeSelectActualIcon from "@material-ui/icons/PhotoSizeSelectActual";
 import RecordVoiceOverIcon from "@material-ui/icons/RecordVoiceOver";
+import CloseIcon from "@material-ui/icons/Close";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      display: "flex",
-      flexWrap: "wrap",
-    },
     margin: {
-      margin: theme.spacing(1),
+      margin: theme.spacing(3),
     },
-    withoutLabel: {
-      marginTop: theme.spacing(3),
+    input: {
+      display: "none",
     },
-    textField: {
-      width: "25ch",
+    singleImageSize: {
+      width: "80%",
+      height: "80%",
+      margin: theme.spacing(3),
     },
-    marginSpace: {
-      margin: theme.spacing(1),
+    hoverBg: {
+      position: "absolute",
+      width: "15%",
+      height: "40%",
+      textAlign: "right",
+      backgroundColor: "rgba(0,0,0,0.5)",
+      opacity: 0,
+      "&:hover": {
+        opacity: 1,
+      },
     },
   })
 );
@@ -45,11 +53,20 @@ type Message = {
   setMessageList: (param: DbMessage[]) => void;
   imageUrl: string;
   setImageUrl: (param: string) => void;
+  imageUrls: ImageArr[];
+  setImageUrls: (param: ImageArr[]) => void;
 };
 
-const Form: FC<Message> = ({ message, setMessage, imageUrl, setImageUrl }) => {
+const Form: FC<Message> = ({
+  message,
+  setMessage,
+  imageUrl,
+  setImageUrl,
+  imageUrls,
+  setImageUrls,
+}) => {
   const [selectEmoji, setSelectEmoji] = useState(false);
-  const [open, setOpen] = useState(false);
+  const uuid = v4();
 
   const { user } = useContext(AuthContext);
   const currentId = useRecoilValue(currentGroupId);
@@ -61,82 +78,118 @@ const Form: FC<Message> = ({ message, setMessage, imageUrl, setImageUrl }) => {
   //--emoji--//
 
   const handleClickTweet = () => {
-    if (!message) {
+    if (!message && message.trim() === "" && !imageUrls) {
       return;
     } else {
-      const userRef = db.collection("users").doc(user.uid);
-      db.collection("chat")
-        .doc()
-        .set({
-          createdAt: new Date(),
-          content: message,
-          image: imageUrl,
-          groupId: db.doc(`groups/${currentId}`),
-          user: userRef,
-        });
+      const userRef = db.doc(`users/${user.uid}`);
+      db.collection("chat").add({
+        createdAt: new Date(),
+        content: message,
+        image: imageUrls,
+        user: userRef,
+        groupId: currentId,
+      });
       setMessage("");
+      setImageUrls([]);
     }
   };
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  // memo 複数画像検討
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files !== null) {
+    if (e.target.files !== null && e.target.files) {
       const file = e.target.files[0];
-      handleCloudUpload("images", file, setImageUrl);
+      if (imageUrls.length >= 4) {
+        return alert("4枚まで選択可能です");
+      } else {
+        handleCloudUpload("images", file, setImageUrl);
+      }
     }
   };
 
-  // useEffect(()=>{
-  //   if(imageUrl){
-  //     db.collection('chat').id()
-  //   }
-  // },[imageUrl])
+  useEffect(() => {
+    if (imageUrl) setImageUrls([...imageUrls, { id: uuid, url: imageUrl }]);
+  }, [imageUrl]);
+
+  const deleteImage = (id: string) => {
+    const filterImage = imageUrls.filter((url) => url.id !== id);
+    setImageUrls(filterImage);
+    if (imageUrls) imageUrls.map((db) => storage.refFromURL(db.url).delete());
+  };
 
   return (
     <>
       <form>
-        <Grid container direction="column" justify="flex-start">
-          <Grid item>
-            <TextField
-              value={message}
-              onChange={(e) => {
-                setMessage(e.target.value);
-              }}
-              multiline
-              rows={5}
-              fullWidth
-              variant="outlined"
-              // InputProps={{
-              //   endAdornment: (
-              //     <IconButton edge="end" style={{ fontSize: 15 }}>
-              //       つぶやく
-              //     </IconButton>
-              //   ),
-              // }}
-            />
+        <Paper>
+          <Grid container direction="column" justify="flex-start">
+            <Grid item>
+              <InputBase
+                value={message}
+                onChange={(e) => {
+                  setMessage(e.target.value);
+                }}
+                multiline
+                fullWidth
+                placeholder="入力してください"
+                className={classes.margin}
+              />
+            </Grid>
+            <Grid
+              container
+              direction="row"
+              justify="flex-start"
+              alignItems="center"
+            >
+              {imageUrl &&
+                imageUrls.map(({ url, id }) => {
+                  return (
+                    <Grid item xs={3}>
+                      <Grid container direction="row" justify="flex-end">
+                        <div key={id} className={classes.hoverBg}>
+                          <div>
+                            <IconButton
+                              onClick={() => {
+                                deleteImage(id);
+                              }}
+                            >
+                              <CloseIcon />
+                            </IconButton>
+                          </div>
+                        </div>
+                      </Grid>
+                      <img src={url} className={classes.singleImageSize} />
+                    </Grid>
+                  );
+                })}
+            </Grid>
+            <Grid
+              container
+              direction="row"
+              justify="flex-end"
+              alignItems="flex-end"
+            >
+              <input
+                accept="image/*"
+                className={classes.input}
+                id="icon-button-file"
+                type="file"
+                onChange={handleImage}
+              />
+              <label htmlFor="icon-button-file">
+                <IconButton aria-label="upload picture" component="span">
+                  <PhotoSizeSelectActualIcon />
+                </IconButton>
+              </label>
+              <IconButton aria-label="emoji" onClick={handleEmojiOpen}>
+                <SentimentSatisfiedAltIcon />
+              </IconButton>
+              <IconButton aria-label="tweet" onClick={handleClickTweet}>
+                <RecordVoiceOverIcon />
+              </IconButton>
+            </Grid>
           </Grid>
-          <Grid item>
-            <IconButton aria-label="image" onClick={handleOpen}>
-              <AddAPhotoIcon />
-            </IconButton>
-            <IconButton aria-label="emoji" onClick={handleEmojiOpen}>
-              <SentimentSatisfiedAltIcon />
-            </IconButton>
-            <IconButton aria-label="tweet" onClick={handleClickTweet}>
-              <RecordVoiceOverIcon />
-            </IconButton>
+          <Grid item container direction="row" justify="flex-end">
             {selectEmoji && <Emoji {...{ onEmojiSelect, selectEmoji }} />}
           </Grid>
-        </Grid>
-        <ImageDialog
-          onClick={handleClose}
-          open={open}
-          title="画像アップロード"
-          onChange={handleImage}
-        />
+        </Paper>
       </form>
     </>
   );

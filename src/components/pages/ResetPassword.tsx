@@ -16,6 +16,7 @@ import { deepOrange } from "@material-ui/core/colors";
 const useStyles = makeStyles((theme) => ({
   root: {
     height: "100vh",
+    background: "white",
   },
   paper: {
     margin: theme.spacing(8, 4),
@@ -33,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+    backgroundColor: deepOrange[200],
   },
 }));
 
@@ -105,7 +107,6 @@ const ResetPassword: FC = () => {
                     name="email"
                     autoComplete="email"
                     autoFocus
-                    // color="deepOrange[300]"
                   />
                 }
               />
@@ -114,7 +115,6 @@ const ResetPassword: FC = () => {
                 type="submit"
                 fullWidth
                 variant="contained"
-                color="primary"
                 className={classes.submit}
               >
                 送信

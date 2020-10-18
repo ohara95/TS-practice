@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isCurrentId, setIsCurrentId] = useState(false);
   const [groups, setGroups] = useRecoilState(groupsData);
-  const setCurrentId = useSetRecoilState(currentGroupId);
+  const [currentId, setCurrentId] = useRecoilState(currentGroupId);
   const setUsers = useSetRecoilState(usersData);
 
   useEffect(() => {
@@ -32,25 +32,27 @@ export const AuthProvider = ({ children }) => {
     // console.log(1, "useEffect");
     if (user) {
       // console.log(2, "useEffect + user");
+      const userPath = db.collection("users").doc(user.uid).path;
+      const userRef = db.collection("users").doc(user.uid);
       db.collection("groups")
-        .where("users", "array-contains", user.uid)
-        .onSnapshot((snapshot) => {
+        .where("users", "array-contains", userPath)
+        .onSnapshot((snap) => {
           // console.log(3, "onSnapshot");
-          const groupContent = snapshot.docs.map((doc) => {
+          const groupContent = snap.docs.map((doc) => {
             return {
               ...doc.data(),
               id: doc.id,
             };
           });
           setGroups(groupContent);
-          setIsCurrentId(true);
+          // setIsCurrentId(true);
         });
     }
   }, [user]);
 
-  useEffect(() => {
-    if (isCurrentId) setCurrentId(groups[0].id);
-  }, [isCurrentId]);
+  // useEffect(() => {
+  //   if (isCurrentId && !currentId) setCurrentId(groups[0].id);
+  // }, [isCurrentId]);
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>
@@ -58,9 +60,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-// setGroups((g) => {
-//   if (currentId === "") {
-//     setCurrentId(g[0].id);
-//   }
-//   return g;
-// });

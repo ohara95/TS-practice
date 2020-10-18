@@ -24,6 +24,7 @@
     "react-hook-form": "^6.9.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
+    "react-scroll": "^1.8.1",
     "recoil": "^0.0.13",
     "typescript": "~3.7.2",
     "typesync": "^0.7.0",

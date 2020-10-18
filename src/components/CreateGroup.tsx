@@ -1,7 +1,7 @@
 import React, { FC, useContext } from "react";
-import firebase, { db } from "../../config/firebase";
-import { AuthContext } from "../../AuthService";
-import CustomForm from "../molecules/CustomForm";
+import firebase, { db } from "../config/firebase";
+import { AuthContext } from "../AuthService";
+import CustomForm from "./molecules/CustomForm";
 
 type Props = {
   groupName: string;
@@ -14,16 +14,15 @@ const CreateGroup: FC<Props> = ({ groupName, setGroupName }) => {
     if (!groupName) {
       return alert("入力してください");
     }
+    const userRef = db.collection("users").doc(user.uid);
+    db.collection("groups").add({
+      groupName,
+      owner: userRef,
+      users: firebase.firestore.FieldValue.arrayUnion(userRef),
+      createdAt: new Date(),
+      iconUrl: "",
+    });
     setGroupName("");
-    db.collection("groups")
-      .doc()
-      .set({
-        groupName,
-        owner: user.uid,
-        users: firebase.firestore.FieldValue.arrayUnion(user.uid),
-        createdAt: new Date(),
-        iconUrl: "",
-      });
   };
 
   return (

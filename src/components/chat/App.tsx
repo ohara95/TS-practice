@@ -1,38 +1,45 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { db } from "../../config/firebase";
 import Form from "./Form";
 import Lists from "./Lists";
-import { DbMessage } from "./type";
+import { DbMessage, ImageArr } from "./type";
+import { AuthContext } from "../../AuthService";
 
 const App = () => {
   const [message, setMessage] = useState("");
   const [messageList, setMessageList] = useState<DbMessage[]>([]);
   const [imageUrl, setImageUrl] = useState("");
+  const [imageUrls, setImageUrls] = useState<ImageArr[]>([]);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
+    const userRef = db.collection("users").doc(user.uid);
     db.collection("chat")
+      .where("user", "==", userRef)
       .orderBy("createdAt", "desc")
-      .onSnapshot(async (snapshot) => {
-        const pullMessage = await Promise.all(
-          snapshot.docs.map(async (doc) => {
-            const userRef = await doc.data().user;
-            const groupRef = await doc.data().groupId;
-            return {
-              ...doc.data(),
-              id: doc.id,
-              groupId: groupRef,
-              user: userRef,
-            };
-          })
-        );
-        setMessageList(pullMessage as any);
+      .onSnapshot((snap) => {
+        const dbMessage = snap.docs.map((doc) => {
+          return {
+            ...(doc.data() as DbMessage),
+            id: doc.id,
+          };
+        });
+        setMessageList(dbMessage);
       });
   }, []);
 
   return (
     <>
       <Form
-        {...{ message, setMessage, setMessageList, imageUrl, setImageUrl }}
+        {...{
+          message,
+          setMessage,
+          setMessageList,
+          imageUrl,
+          setImageUrl,
+          imageUrls,
+          setImageUrls,
+        }}
       />
       <Lists {...{ messageList }} />
     </>

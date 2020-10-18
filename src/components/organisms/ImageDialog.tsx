@@ -19,12 +19,11 @@ type Props = {
 
 const ImageDialog: FC<Props> = ({ onClick, open, title, text, onChange }) => {
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
 
   return (
     <div>
       <Dialog
-        fullScreen={fullScreen}
         open={open}
         onClick={onClick}
         aria-labelledby="responsive-dialog-title"

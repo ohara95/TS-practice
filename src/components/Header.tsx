@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
+import { animateScroll as scroll } from "react-scroll";
 import { currentGroupId, groupsData, usersData } from "../atoms_recoil";
 
 //component
@@ -59,14 +60,28 @@ const Header = () => {
   const [open, setOpen] = useState(false);
   const currentId = useRecoilValue(currentGroupId);
   const groups = useRecoilValue(groupsData);
-  const dbUsers = useRecoilValue(usersData);
+  const users = useRecoilValue(usersData);
+
+  //memo動かない
+  const scrollToTop = () => {
+    scroll.scrollToTop();
+  };
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const groupContext = () => groups.find((group) => group.id === currentId);
-  const groupUsers = groups.find((group) => group.users);
+  // const groupUsers = groups.map((group) => group.users);
 
+  // const test = groupUsers?.users.map((user) => {
+  //   if (dbUsers) {
+  //     return dbUsers.map((fireStoreUser) => {
+  //       if (fireStoreUser.id === user) {
+  //         return fireStoreUser.name;
+  //       }
+  //     });
+  //   }
+  // });
   return (
     <>
       <CssBaseline />
@@ -83,11 +98,12 @@ const Header = () => {
             color="inherit"
             noWrap
             className={classes.title}
+            onClick={scrollToTop}
           >
-            {groupContext()?.groupName}
+            {groupContext()?.name}
           </Typography>
           <AvatarGroup max={4}>
-            {groupUsers?.users.map((user) => {
+            {/* {groupUsers?.users.map((user) => {
               if (dbUsers) {
                 return dbUsers.map((fireStoreUser) => {
                   if (fireStoreUser.id === user) {
@@ -100,7 +116,7 @@ const Header = () => {
                   }
                 });
               }
-            })}
+            })} */}
           </AvatarGroup>
           <IconButton color="inherit" onClick={handleOpen}>
             <Badge color="secondary">
@@ -111,7 +127,7 @@ const Header = () => {
             render={<GroupSetting />}
             open={open}
             close={handleClose}
-            title="グループ設定"
+            title={groupContext()?.name}
             src={groupContext()?.iconUrl}
           />
         </Toolbar>
