@@ -1,13 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { groupsData } from "../../atoms_recoil";
 import { useRecoilValue } from "recoil";
 import CurrentGroup from "./CurrentGroup";
-import { Group } from "../../typs";
 
 // material
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
-import Divider from "@material-ui/core/Divider";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const GroupList = () => {
   const classes = useStyles();
-  const groups = useRecoilValue<Group[]>(groupsData);
+  const groups = useRecoilValue(groupsData);
 
   return (
     <div className={classes.root}>
@@ -32,13 +30,13 @@ const GroupList = () => {
         {groups &&
           groups.map((group) => (
             <CurrentGroup
+              key={group.id}
               id={group.id}
-              name={group.groupName}
+              name={group.name}
               icon={group.iconUrl}
             />
           ))}
       </List>
-      <Divider />
     </div>
   );
 };

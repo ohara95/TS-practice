@@ -59,6 +59,7 @@ const GroupModal: FC<Props> = ({ open, close, title, src, render }) => {
             direction="column"
             justify="center"
             alignItems="center"
+            style={{ height: 100 }}
           >
             <Typography>{title}</Typography>
             <Avatar aria-label="recipe" className={classes.large} src={src} />

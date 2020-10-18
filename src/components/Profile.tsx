@@ -1,11 +1,14 @@
 import React, { useState, useContext, useEffect } from "react";
+import { useRecoilValue } from "recoil";
+import CopyToClipBoard from "react-copy-to-clipboard";
 import { AuthContext } from "../AuthService";
-import firebase, { db, auth } from "../config/firebase";
+import { db, auth } from "../config/firebase";
 import defaultUser from "../img/user.jpg";
 import { handleCloudUpload } from "../utils/imageUpload";
-import { currentGroupId, usersData } from "../atoms_recoil";
-import { useRecoilValue } from "recoil";
-// import { next, error, complete } from "../utils/imageUpload";
+import { usersData } from "../atoms_recoil";
+import CreateGroup from "../components/CreateGroup";
+import GroupList from "./displayGroup";
+
 //material
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
@@ -17,22 +20,21 @@ import CardActions from "@material-ui/core/CardActions";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
-import { grey } from "@material-ui/core/colors";
 import Button from "@material-ui/core/Button";
 import CardMedia from "@material-ui/core/CardMedia";
+import Grid from "@material-ui/core/Grid";
+import Tooltip from "@material-ui/core/Tooltip";
+import InputAdornment from "@material-ui/core/InputAdornment";
 //icon
 import FavoriteIcon from "@material-ui/icons/Favorite";
-import ShareIcon from "@material-ui/icons/Share";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import Tooltip from "@material-ui/core/Tooltip";
-import CopyToClipBoard from "react-copy-to-clipboard";
-import InputAdornment from "@material-ui/core/InputAdornment";
 import AssignmentIcon from "@material-ui/icons/Assignment";
-import Grid from "@material-ui/core/Grid";
+import AddIcon from "@material-ui/icons/Add";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 345,
+    border: "none",
   },
   media: {
     height: 0,
@@ -48,9 +50,6 @@ const useStyles = makeStyles((theme) => ({
   expandOpen: {
     transform: "rotate(180deg)",
   },
-  avatar: {
-    backgroundColor: grey[500],
-  },
 }));
 
 const Profile = () => {
@@ -58,6 +57,8 @@ const Profile = () => {
   const [expanded, setExpanded] = useState(false);
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState("");
+  const [openAddGroup, setOpenAddGroup] = useState(false);
+  const [groupName, setGroupName] = useState("");
   const [openTip, setOpenTip] = useState(false);
   const { user } = useContext(AuthContext);
   const users = useRecoilValue(usersData);
@@ -74,15 +75,13 @@ const Profile = () => {
           name: username,
         })
         .then()
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err, "changeName"));
     }
   };
 
   const displayName = () => {
     if (users && user) {
-      const findUser = users.find(
-        (storeUser: any) => storeUser.id === user.uid
-      );
+      const findUser = users.find((dbUser: any) => dbUser.id === user.uid);
       if (findUser) {
         return findUser.name;
       }
@@ -91,14 +90,10 @@ const Profile = () => {
 
   const onImageSubmit = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files !== null) {
-      if (e.target.files !== null) {
-        const file = e.target.files[0];
-        handleCloudUpload("icons", file, setAvatar);
-      }
+      const file = e.target.files[0];
+      handleCloudUpload("avatars", file, setAvatar);
     }
   };
-
-  console.log(avatar);
 
   useEffect(() => {
     if (avatar) {
@@ -125,8 +120,13 @@ const Profile = () => {
         <IconButton aria-label="add to favorites">
           <FavoriteIcon color="secondary" />
         </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
+        <IconButton
+          aria-label="addGroup"
+          onClick={() => {
+            setOpenAddGroup(!openAddGroup);
+          }}
+        >
+          <AddIcon />
         </IconButton>
         <IconButton
           className={clsx(classes.expand, {
@@ -139,6 +139,9 @@ const Profile = () => {
           <ExpandMoreIcon />
         </IconButton>
       </CardActions>
+      <Grid container direction="row" justify="center" alignItems="center">
+        {openAddGroup && <CreateGroup {...{ groupName, setGroupName }} />}
+      </Grid>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Typography paragraph>設定</Typography>
@@ -167,19 +170,17 @@ const Profile = () => {
                 <Button onClick={changeName}>変更</Button>
               </Grid>
             </Grid>
-            <form>
-              <input
-                id="contained-button-file"
-                type="file"
-                onChange={onImageSubmit}
-                style={{ display: "none" }}
-              />
-              <label htmlFor="contained-button-file">
-                <Button variant="outlined" component="span" fullWidth>
-                  画像アップロード
-                </Button>
-              </label>
-            </form>
+            <input
+              id="contained-button-file"
+              type="file"
+              onChange={onImageSubmit}
+              style={{ display: "none" }}
+            />
+            <label htmlFor="contained-button-file">
+              <Button variant="outlined" component="span" fullWidth>
+                画像アップロード
+              </Button>
+            </label>
             <Grid
               container
               direction="row"
@@ -228,6 +229,7 @@ const Profile = () => {
           </Button>
         </CardContent>
       </Collapse>
+      <GroupList />
     </Card>
   );
 };

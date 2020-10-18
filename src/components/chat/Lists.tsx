@@ -12,9 +12,6 @@ const useStyles = makeStyles((theme) => ({
 
 type Props = {
   messageList: DbMessage[];
-  // setMessageList: (param: DbMessage[]) => void;
-  // message: string;
-  // setMessage: (param: string) => void;
 };
 
 const Lists: FC<Props> = ({ messageList }) => {
@@ -24,12 +21,14 @@ const Lists: FC<Props> = ({ messageList }) => {
     <List className={classes.root}>
       {messageList.map((list) => {
         return (
-          <List>
+          <List key={list.id}>
             <Item
               content={list.content}
               id={list.id}
               createdAt={list.createdAt}
-              // userRef={list.user}
+              userRef={list.user}
+              image={list.image}
+              groupId={list.groupId}
             />
           </List>
         );

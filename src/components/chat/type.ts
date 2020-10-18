@@ -1,13 +1,15 @@
-export type Message = {
-  message: string;
-  setMessage: (param: string) => void;
-};
+import firebase from "../../config/firebase";
 
 export type DbMessage = {
   content: string;
   createdAt: firebase.firestore.Timestamp;
-  groupId: any[];
-  image: string;
-  user: any;
+  image: ImageArr[];
+  user: firebase.firestore.DocumentReference;
   id: string;
+  groupId: string;
+};
+
+export type ImageArr = {
+  id: string;
+  url: string;
 };
