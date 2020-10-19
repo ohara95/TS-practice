@@ -15,8 +15,6 @@ const App = () => {
       .orderBy("createdAt", "desc")
       .onSnapshot((snap) => {
         const dbMessage = snap.docs.map((doc) => {
-          console.log(doc.data());
-
           return {
             ...(doc.data() as DbMessage),
             id: doc.id,
