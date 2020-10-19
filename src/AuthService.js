@@ -9,8 +9,9 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isCurrentId, setIsCurrentId] = useState(false);
   const [groups, setGroups] = useRecoilState(groupsData);
-  const [currentId, setCurrentId] = useRecoilState(currentGroupId);
-  const setUsers = useSetRecoilState(usersData);
+  const setCurrentId = useSetRecoilState(currentGroupId);
+  const [users, setUsers] = useRecoilState(usersData);
+  const activeGroup = users.find((db) => db.id === user?.uid)?.activeGroupId;
 
   useEffect(() => {
     auth.onAuthStateChanged((dbUser) => setUser(dbUser));
@@ -29,14 +30,11 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    // console.log(1, "useEffect");
     if (user) {
-      // console.log(2, "useEffect + user");
       const userRef = db.collection("users").doc(user.uid);
       db.collection("groups")
         .where("users", "array-contains", userRef)
         .onSnapshot(async (snap) => {
-          // console.log(3, "onSnapshot");
           const groupContent = await Promise.all(
             snap.docs.map(async (doc) => {
               const owner = await doc
@@ -47,7 +45,6 @@ export const AuthProvider = ({ children }) => {
               const dbUser = await Promise.all(
                 doc.data().users.map((db) => db.get().then((res) => res.data()))
               );
-
               return {
                 ...doc.data(),
                 id: doc.id,
@@ -63,7 +60,15 @@ export const AuthProvider = ({ children }) => {
   }, [user]);
 
   useEffect(() => {
-    if (isCurrentId && !currentId) setCurrentId(groups[0].id);
+    if (isCurrentId) {
+      if (activeGroup) {
+        setCurrentId(activeGroup);
+      } else {
+        if (groups.length) {
+          setCurrentId(groups[0].id);
+        }
+      }
+    }
   }, [isCurrentId]);
 
   return (

@@ -1,10 +1,11 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState, useContext } from "react";
 import firebase, { db, storage } from "../../config/firebase";
 import { format } from "date-fns";
 import { useRecoilValue } from "recoil";
-import { currentGroupId } from "../../atoms_recoil";
+import { currentGroupId, usersData } from "../../atoms_recoil";
 import { Users } from "../../types";
 import { ImageArr } from "./type";
+import { AuthContext } from "../../AuthService";
 
 // material
 import { makeStyles } from "@material-ui/core/styles";
@@ -37,6 +38,9 @@ const useStyles = makeStyles((theme) => ({
     height: "20%",
     margin: theme.spacing(2),
   },
+  otherTweet: {
+    marginRight: theme.spacing(3),
+  },
 }));
 
 type Props = {
@@ -58,7 +62,9 @@ const Item: FC<Props> = ({
 }) => {
   const classes = useStyles();
   const currentId = useRecoilValue(currentGroupId);
+  const users = useRecoilValue(usersData);
   const [userDetail, setUserDetail] = useState<Users[]>([]);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     userRef
@@ -72,6 +78,32 @@ const Item: FC<Props> = ({
   };
 
   const userContext = userDetail.find((db) => db);
+  const currentGroup = () => {
+    if (userContext) {
+      return userContext?.activeGroupId;
+    }
+  };
+
+  const deleteIcon = () => {
+    if (user && userContext) {
+      if (user.uid === userContext?.id) {
+        return (
+          <IconButton
+            onClick={() => {
+              deleteItem(id);
+            }}
+            edge="end"
+            aria-label="delete"
+            size="small"
+          >
+            <DeleteIcon />
+          </IconButton>
+        );
+      } else {
+        return <span className={classes.otherTweet} />;
+      }
+    }
+  };
 
   return (
     <>
@@ -82,12 +114,16 @@ const Item: FC<Props> = ({
               <Avatar src={userContext && userContext.avatarUrl} />
             </ListItemAvatar>
             <ListItemText
-              primary={userContext && userContext.name}
+              primary={
+                <Typography variant="body1" style={{ fontWeight: "bold" }}>
+                  {userContext && userContext.name}
+                </Typography>
+              }
               secondary={
                 <React.Fragment>
                   <Typography
                     component="span"
-                    variant="body2"
+                    variant="body1"
                     className={classes.inline}
                     color="textPrimary"
                   >
@@ -103,7 +139,8 @@ const Item: FC<Props> = ({
               color="textSecondary"
             >
               {format(new Date(createdAt.seconds * 1000), "yyyy/MM/dd HH:mm")}
-              <IconButton
+              {deleteIcon()}
+              {/* <IconButton
                 onClick={() => {
                   deleteItem(id);
                 }}
@@ -112,7 +149,7 @@ const Item: FC<Props> = ({
                 size="small"
               >
                 <DeleteIcon />
-              </IconButton>
+              </IconButton> */}
             </Typography>
           </ListItem>
           <Grid

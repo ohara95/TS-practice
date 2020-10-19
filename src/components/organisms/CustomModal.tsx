@@ -7,7 +7,10 @@ import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
+import IconButton from "@material-ui/core/IconButton";
 import Grid from "@material-ui/core/Grid";
+import FavoriteIcon from "@material-ui/icons/Favorite";
+import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -61,6 +64,9 @@ const GroupModal: FC<Props> = ({ open, close, title, src, render }) => {
             alignItems="center"
             style={{ height: 100 }}
           >
+            <IconButton aria-label="add to favorites">
+              <FavoriteBorderIcon />
+            </IconButton>
             <Typography>{title}</Typography>
             <Avatar aria-label="recipe" className={classes.large} src={src} />
           </Grid>

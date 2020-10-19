@@ -118,9 +118,6 @@ const Profile = () => {
       />
       <CardHeader title={displayName()} />
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon color="secondary" />
-        </IconButton>
         <IconButton
           aria-label="addGroup"
           onClick={() => {
