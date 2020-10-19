@@ -64,9 +64,7 @@ export const AuthProvider = ({ children }) => {
       if (activeGroup) {
         setCurrentId(activeGroup);
       } else {
-        if (groups.length) {
-          setCurrentId(groups[0].id);
-        }
+        if (groups.length) setCurrentId(groups[0].id);
       }
     }
   }, [isCurrentId]);

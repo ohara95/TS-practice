@@ -23,7 +23,6 @@ const useStyles = makeStyles((theme: Theme) =>
 const GroupList = () => {
   const classes = useStyles();
   const groups = useRecoilValue(groupsData);
-  console.log(groups);
 
   return (
     <div className={classes.root}>
@@ -32,7 +31,7 @@ const GroupList = () => {
           groups.map((group) => (
             <CurrentGroup
               key={group.id}
-              id={group.id}
+              id={group?.id}
               name={group.name}
               icon={group.iconUrl}
             />

@@ -71,7 +71,7 @@ const Header = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const groupContext = () => groups.find((group) => group.id === currentId);
+  const groupContext = groups.find((group) => group.id === currentId);
 
   return (
     <>
@@ -80,7 +80,7 @@ const Header = () => {
         <Toolbar className={classes.toolbar}>
           <Avatar
             alt="groupIcon"
-            src={groupContext()?.iconUrl}
+            src={groupContext?.iconUrl}
             className={classes.groupIcon}
           />
           <Typography
@@ -91,10 +91,10 @@ const Header = () => {
             className={classes.title}
             onClick={scrollToTop}
           >
-            {groupContext()?.name}
+            {groupContext?.name}
           </Typography>
           <AvatarGroup max={4}>
-            {groupContext()?.users.map((db) => (
+            {groupContext?.users.map((db) => (
               <Avatar alt={db.name} src={db.avatarUrl} />
             ))}
           </AvatarGroup>
@@ -107,8 +107,10 @@ const Header = () => {
             render={<GroupSetting />}
             open={open}
             close={handleClose}
-            title={groupContext()?.name}
-            src={groupContext()?.iconUrl}
+            title={groupContext?.name}
+            src={groupContext?.iconUrl}
+            favorite={groupContext?.favorite}
+            currentId={currentId}
           />
         </Toolbar>
       </AppBar>

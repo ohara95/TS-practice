@@ -7,6 +7,7 @@ export type Group = {
   users: Users[];
   id: string;
   iconUrl: string;
+  favorite: boolean;
 };
 
 export type Users = {
