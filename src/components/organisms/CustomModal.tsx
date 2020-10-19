@@ -1,4 +1,7 @@
 import React, { FC } from "react";
+import { useRecoilState } from "recoil";
+import { groupsData } from "../../atoms_recoil";
+import { db } from "../../config/firebase";
 
 //material
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
@@ -11,6 +14,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Grid from "@material-ui/core/Grid";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
+import { red } from "@material-ui/core/colors";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -28,6 +32,9 @@ const useStyles = makeStyles((theme: Theme) =>
       width: theme.spacing(10),
       height: theme.spacing(10),
     },
+    iconColor: {
+      color: red["A200"],
+    },
   })
 );
 
@@ -37,10 +44,37 @@ type Props = {
   title: string;
   src?: string;
   render?: JSX.Element;
+  favorite: boolean;
+  currentId: string;
 };
 
-const GroupModal: FC<Props> = ({ open, close, title, src, render }) => {
+const GroupModal: FC<Props> = ({
+  open,
+  close,
+  title,
+  src,
+  render,
+  favorite,
+  currentId,
+}) => {
   const classes = useStyles();
+  const [groups, setGroups] = useRecoilState(groupsData);
+
+  const isFavorite = () => {
+    setGroups(
+      groups.map((group) => {
+        if (group?.id === currentId) {
+          return {
+            ...group,
+            favorite: !group.favorite,
+          };
+        } else {
+          return group;
+        }
+      })
+    );
+    db.collection("groups").doc(currentId).update({ favorite: !favorite });
+  };
 
   return (
     <Modal
@@ -64,8 +98,12 @@ const GroupModal: FC<Props> = ({ open, close, title, src, render }) => {
             alignItems="center"
             style={{ height: 100 }}
           >
-            <IconButton aria-label="add to favorites">
-              <FavoriteBorderIcon />
+            <IconButton aria-label="add to favorites" onClick={isFavorite}>
+              {favorite ? (
+                <FavoriteIcon className={classes.iconColor} />
+              ) : (
+                <FavoriteBorderIcon />
+              )}
             </IconButton>
             <Typography>{title}</Typography>
             <Avatar aria-label="recipe" className={classes.large} src={src} />
