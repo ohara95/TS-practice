@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
 import { animateScroll as scroll } from "react-scroll";
 import { currentGroupId, groupsData, usersData } from "../atoms_recoil";
+import { Group } from "../types";
 
 //component
 import CustomModal from "./organisms/CustomModal";
@@ -71,17 +72,7 @@ const Header = () => {
   const handleClose = () => setOpen(false);
 
   const groupContext = () => groups.find((group) => group.id === currentId);
-  // const groupUsers = groups.map((group) => group.users);
 
-  // const test = groupUsers?.users.map((user) => {
-  //   if (dbUsers) {
-  //     return dbUsers.map((fireStoreUser) => {
-  //       if (fireStoreUser.id === user) {
-  //         return fireStoreUser.name;
-  //       }
-  //     });
-  //   }
-  // });
   return (
     <>
       <CssBaseline />
@@ -103,20 +94,9 @@ const Header = () => {
             {groupContext()?.name}
           </Typography>
           <AvatarGroup max={4}>
-            {/* {groupUsers?.users.map((user) => {
-              if (dbUsers) {
-                return dbUsers.map((fireStoreUser) => {
-                  if (fireStoreUser.id === user) {
-                    return (
-                      <Avatar
-                        alt={fireStoreUser.name}
-                        src={fireStoreUser.avatarUrl}
-                      />
-                    );
-                  }
-                });
-              }
-            })} */}
+            {groupContext()?.users.map((db) => (
+              <Avatar alt={db.name} src={db.avatarUrl} />
+            ))}
           </AvatarGroup>
           <IconButton color="inherit" onClick={handleOpen}>
             <Badge color="secondary">

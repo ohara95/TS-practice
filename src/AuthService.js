@@ -32,27 +32,39 @@ export const AuthProvider = ({ children }) => {
     // console.log(1, "useEffect");
     if (user) {
       // console.log(2, "useEffect + user");
-      const userPath = db.collection("users").doc(user.uid).path;
       const userRef = db.collection("users").doc(user.uid);
       db.collection("groups")
         .where("users", "array-contains", userRef)
-        .onSnapshot((snap) => {
+        .onSnapshot(async (snap) => {
           // console.log(3, "onSnapshot");
-          const groupContent = snap.docs.map((doc) => {
-            return {
-              ...doc.data(),
-              id: doc.id,
-            };
-          });
+          const groupContent = await Promise.all(
+            snap.docs.map(async (doc) => {
+              const owner = await doc
+                .data()
+                .owner.get()
+                .then((res) => res.data());
+
+              const dbUser = await Promise.all(
+                doc.data().users.map((db) => db.get().then((res) => res.data()))
+              );
+
+              return {
+                ...doc.data(),
+                id: doc.id,
+                owner,
+                users: dbUser,
+              };
+            })
+          );
           setGroups(groupContent);
-          // setIsCurrentId(true);
+          setIsCurrentId(true);
         });
     }
   }, [user]);
 
-  // useEffect(() => {
-  //   if (isCurrentId && !currentId) setCurrentId(groups[0].id);
-  // }, [isCurrentId]);
+  useEffect(() => {
+    if (isCurrentId && !currentId) setCurrentId(groups[0].id);
+  }, [isCurrentId]);
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>

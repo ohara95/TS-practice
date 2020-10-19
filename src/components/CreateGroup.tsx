@@ -16,7 +16,7 @@ const CreateGroup: FC<Props> = ({ groupName, setGroupName }) => {
     }
     const userRef = db.collection("users").doc(user.uid);
     db.collection("groups").add({
-      groupName,
+      name: groupName,
       owner: userRef,
       users: firebase.firestore.FieldValue.arrayUnion(userRef),
       createdAt: new Date(),

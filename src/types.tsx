@@ -3,13 +3,12 @@ import firebase, { db } from "./config/firebase";
 import { AuthContext } from "./AuthService";
 
 const { user } = React.useContext(AuthContext);
-const usersPath = db.collection("users").doc(user.uid).path;
 
 export type Group = {
   createdAt: firebase.firestore.Timestamp;
   name: string;
-  owner: firebase.firestore.DocumentReference;
-  users: firebase.firestore.DocumentReference[];
+  owner: Users;
+  users: Users[];
   id: string;
   iconUrl: string;
 };
