@@ -1,9 +1,8 @@
-import React, { FC, useEffect, useContext, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import firebase, { db, storage } from "../../config/firebase";
-import { AuthContext } from "../../AuthService";
 import { format } from "date-fns";
 import { useRecoilValue } from "recoil";
-import { usersData, currentGroupId } from "../../atoms_recoil";
+import { currentGroupId } from "../../atoms_recoil";
 import { Users } from "../../types";
 import { ImageArr } from "./type";
 
@@ -45,7 +44,6 @@ type Props = {
   id: string;
   createdAt: firebase.firestore.Timestamp;
   image: ImageArr[];
-  // memo |Users怒られる
   userRef: firebase.firestore.DocumentReference;
   groupId: string;
 };
@@ -60,21 +58,20 @@ const Item: FC<Props> = ({
 }) => {
   const classes = useStyles();
   const currentId = useRecoilValue(currentGroupId);
-  const [userDetail, setUserDetail] = useState([]);
-  const [avatar, setAvatar] = useState("");
+  const [userDetail, setUserDetail] = useState<Users[]>([]);
 
   useEffect(() => {
-    userRef.get().then((res) => setUserDetail([...userDetail, res.data()]));
+    userRef
+      .get()
+      .then((res) => setUserDetail([...userDetail, res.data()] as Users[]));
   }, []);
-
-  useEffect(() => {
-    userDetail.forEach((db) => setAvatar(db.avatarUrl));
-  }, [userDetail]);
 
   const deleteItem = (id: string) => {
     db.collection("chat").doc(id).delete();
     if (image) image.map((db) => storage.refFromURL(db.url).delete());
   };
+
+  const userContext = userDetail.find((db) => db);
 
   return (
     <>
@@ -82,10 +79,10 @@ const Item: FC<Props> = ({
         <>
           <ListItem alignItems="flex-start">
             <ListItemAvatar>
-              <Avatar src={avatar && avatar} />
+              <Avatar src={userContext && userContext.avatarUrl} />
             </ListItemAvatar>
             <ListItemText
-              primary={userDetail.map(({ name }) => name)}
+              primary={userContext && userContext.name}
               secondary={
                 <React.Fragment>
                   <Typography
@@ -105,7 +102,7 @@ const Item: FC<Props> = ({
               className={classes.inline}
               color="textSecondary"
             >
-              {format(new Date(createdAt.seconds * 1000), "yyyy/MM/dd hh:mm")}
+              {format(new Date(createdAt.seconds * 1000), "yyyy/MM/dd HH:mm")}
               <IconButton
                 onClick={() => {
                   deleteItem(id);

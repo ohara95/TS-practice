@@ -34,6 +34,7 @@ const GroupList = () => {
               id={group.id}
               name={group.name}
               icon={group.iconUrl}
+              users={group.users}
             />
           ))}
       </List>
