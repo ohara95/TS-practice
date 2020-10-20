@@ -43,7 +43,6 @@ type Props = {
 
 const UserListModal: FC<Props> = ({ open, title, close, users }) => {
   const classes = useStyles();
-  console.log(users);
 
   return (
     <Modal

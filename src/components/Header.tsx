@@ -20,6 +20,7 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import Avatar from "@material-ui/core/Avatar";
 import AvatarGroup from "@material-ui/lab/AvatarGroup";
 import { deepOrange } from "@material-ui/core/colors";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -95,13 +96,17 @@ const Header = () => {
             className={classes.title}
             onClick={scrollToTop}
           >
-            {groupContext?.name}
+            {groupContext ? groupContext?.name : <CircularProgress />}
           </Typography>
-          <AvatarGroup max={4} onClick={userModalOpen}>
-            {groupContext?.users.map((db) => (
-              <Avatar alt={db.name} src={db.avatarUrl} />
-            ))}
-          </AvatarGroup>
+          {groupContext ? (
+            <AvatarGroup max={4} onClick={userModalOpen}>
+              {groupContext?.users.map((db) => (
+                <Avatar alt={db.name} src={db.avatarUrl} />
+              ))}
+            </AvatarGroup>
+          ) : (
+            <CircularProgress />
+          )}
           <IconButton color="inherit" onClick={groupModalOpen}>
             <Badge color="secondary">
               <MoreVertIcon />
