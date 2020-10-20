@@ -25,6 +25,7 @@ import CardMedia from "@material-ui/core/CardMedia";
 import Grid from "@material-ui/core/Grid";
 import Tooltip from "@material-ui/core/Tooltip";
 import InputAdornment from "@material-ui/core/InputAdornment";
+import Paper from "@material-ui/core/Paper";
 //icon
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -35,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 345,
     border: "none",
+    paddingTop: theme.spacing(5),
   },
   media: {
     height: 0,
@@ -96,9 +98,8 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    if (avatar) {
+    if (avatar)
       db.collection("users").doc(user.uid).update({ avatarUrl: avatar });
-    }
   }, [avatar]);
 
   const displayUser = () => {
@@ -108,7 +109,7 @@ const Profile = () => {
   };
 
   return (
-    <Card className={classes.root}>
+    <Paper className={classes.root} elevation={0}>
       <CardMedia
         className={classes.media}
         image={
@@ -230,7 +231,7 @@ const Profile = () => {
         </CardContent>
       </Collapse>
       <GroupList />
-    </Card>
+    </Paper>
   );
 };
 

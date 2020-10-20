@@ -9,10 +9,10 @@ import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import { deepOrange } from "@material-ui/core/colors";
+import { deepOrange, grey } from "@material-ui/core/colors";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,7 +27,8 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: deepOrange[200],
+    color: deepOrange[200],
+    backgroundColor: "white",
   },
   form: {
     width: "70%",
@@ -36,6 +37,8 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
     backgroundColor: deepOrange[200],
+    fontWeight: "bold",
+    color: "white",
   },
 }));
 
@@ -80,9 +83,13 @@ const Signin = () => {
         <Grid item xs={12} sm={6}>
           <div className={classes.paper}>
             <Avatar className={classes.avatar}>
-              <LockOutlinedIcon />
+              <VpnKeyIcon style={{ fontSize: 40 }} />
             </Avatar>
-            <Typography component="h1" variant="h5">
+            <Typography
+              component="h1"
+              variant="h5"
+              style={{ color: grey[700] }}
+            >
               ログイン
             </Typography>
             <form
