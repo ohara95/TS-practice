@@ -5,11 +5,10 @@ import { AuthContext } from "../AuthService";
 import { db, auth } from "../config/firebase";
 import defaultUser from "../img/user.jpg";
 import { handleCloudUpload } from "../utils/imageUpload";
-import { usersData } from "../atoms_recoil";
+import { usersData, groupsData, isLoading } from "../atoms_recoil";
 import CreateGroup from "../components/CreateGroup";
 import GroupList from "./displayGroup";
-import { isLoading } from "../atoms_recoil";
-import { useSetRecoilState } from "recoil";
+import { useSetRecoilState, useRecoilState } from "recoil";
 
 //material
 import { makeStyles } from "@material-ui/core/styles";
@@ -66,6 +65,7 @@ const Profile = () => {
   const { user } = useContext(AuthContext);
   const users = useRecoilValue(usersData);
   const setLoading = useSetRecoilState(isLoading);
+  const [groups, setGroups] = useRecoilState(groupsData);
 
   const handleExpandClick = () => setExpanded(!expanded);
   const handleCloseTip = () => setOpenTip(false);
@@ -221,6 +221,10 @@ const Profile = () => {
             onClick={() => {
               auth.signOut().then(() => {
                 setLoading(false);
+                setGroups([]);
+                db.collection("users")
+                  .doc(user.uid)
+                  .update({ activeGroupId: groups[0].id });
               });
             }}
             fullWidth

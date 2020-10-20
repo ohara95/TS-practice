@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { auth, db } from "./config/firebase";
 import { groupsData, currentGroupId, usersData } from "./atoms_recoil";
-import { useSetRecoilState, useRecoilState } from "recoil";
+import { useSetRecoilState, useRecoilState, useRecoilValue } from "recoil";
 
 export const AuthContext = React.createContext();
 
@@ -11,7 +11,8 @@ export const AuthProvider = ({ children }) => {
   const [groups, setGroups] = useRecoilState(groupsData);
   const setCurrentId = useSetRecoilState(currentGroupId);
   const [users, setUsers] = useRecoilState(usersData);
-  const activeGroup = users.find((db) => db.id === user?.uid)?.activeGroupId;
+  const currentId = useRecoilValue(currentGroupId);
+  const activeId = users.find((db) => db.id === user?.uid)?.activeGroupId;
 
   useEffect(() => {
     auth.onAuthStateChanged((dbUser) => setUser(dbUser));
@@ -60,14 +61,47 @@ export const AuthProvider = ({ children }) => {
   }, [user]);
 
   useEffect(() => {
-    if (isCurrentId) {
-      if (activeGroup) {
-        setCurrentId(activeGroup);
-      } else {
-        if (groups.length) setCurrentId(groups[0].id);
-      }
+    if (!isCurrentId) {
+      setUsers(
+        users.map((db) => {
+          if (db.id === user.uid) {
+            return {
+              ...db,
+              activeGroupId: groups[0]?.id,
+            };
+          } else {
+            return db;
+          }
+        })
+      );
     }
   }, [isCurrentId]);
+  // useEffect(() => {
+  //   if (isCurrentId) {
+  //     if (activeGroup) {
+  //       setCurrentId(activeId);
+  //     } else {
+  //       if (groups.length) setCurrentId(groups[0].id);
+  //     }
+  //   }
+  // }, [isCurrentId]);
+
+  // useEffect(() => {
+  //   if (!activeId) {
+  //     setUsers(
+  //       users.map((db) => {
+  //         if (db.id === user.uid) {
+  //           return {
+  //             ...db,
+  //             activeGroupId: groups[0]?.id,
+  //           };
+  //         } else {
+  //           return db;
+  //         }
+  //       })
+  //     );
+  //   }
+  // }, [groups, currentId]);
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>

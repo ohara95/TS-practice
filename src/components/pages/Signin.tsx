@@ -8,7 +8,7 @@ import { useRecoilState } from "recoil";
 import Spinner from "../pages/Spinner";
 // material
 import { makeStyles } from "@material-ui/core/styles";
-import { deepOrange } from "@material-ui/core/colors";
+import { deepOrange, grey } from "@material-ui/core/colors";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
@@ -16,9 +16,6 @@ import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import { deepOrange, grey } from "@material-ui/core/colors";
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -92,43 +89,43 @@ const Signin = () => {
   }
 
   return (
-
-         {loading ? (
+    <>
+      {loading ? (
         <Spinner />
       ) : (
-    <Grid container component="main" className={classes.root}>
-      <CssBaseline />
-      <Grid container justify="center" spacing={2}>
-        <Grid item xs={12} sm={6}>
-          <div className={classes.paper}>
-            <Avatar className={classes.avatar}>
-              <VpnKeyIcon style={{ fontSize: 40 }} />
-            </Avatar>
-            <Typography
-              component="h1"
-              variant="h5"
-              style={{ color: grey[700] }}
-            >
-              ログイン
-            </Typography>
-            <form
-              onSubmit={handleSubmit(onFormSubmit)}
-              className={classes.form}
-              noValidate
-            >
-              <Controller
-                name="email"
-                defaultValue=""
-                control={control}
-                rules={{ required: true }}
-                as={
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="email"
-                    label="メールアドレス"
+        <Grid container component="main" className={classes.root}>
+          <CssBaseline />
+          <Grid container justify="center" spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <div className={classes.paper}>
+                <Avatar className={classes.avatar}>
+                  <VpnKeyIcon style={{ fontSize: 40 }} />
+                </Avatar>
+                <Typography
+                  component="h1"
+                  variant="h5"
+                  style={{ color: grey[700] }}
+                >
+                  ログイン
+                </Typography>
+                <form
+                  onSubmit={handleSubmit(onFormSubmit)}
+                  className={classes.form}
+                  noValidate
+                >
+                  <Controller
+                    name="email"
+                    defaultValue=""
+                    control={control}
+                    rules={{ required: true }}
+                    as={
+                      <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="email"
+                        label="メールアドレス"
                         name="email"
                         autoComplete="email"
                         autoFocus

@@ -1,7 +1,7 @@
 import React, { FC, useState, useContext, useEffect } from "react";
 import { db, storage } from "../../config/firebase";
 import { AuthContext } from "../../AuthService";
-import { currentGroupId } from "../../atoms_recoil";
+import { usersData } from "../../atoms_recoil";
 import { useRecoilValue } from "recoil";
 import { handleCloudUpload } from "../../utils/imageUpload";
 import { DbMessage, ImageArr } from "./type";
@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     margin: {
       margin: theme.spacing(3),
+      width: "80%",
     },
     input: {
       display: "none",
@@ -69,8 +70,9 @@ const Form: FC<Message> = ({
   const uuid = v4();
 
   const { user } = useContext(AuthContext);
-  const currentId = useRecoilValue(currentGroupId);
+  const users = useRecoilValue(usersData);
   const classes = useStyles();
+  const activeId = users.find((db) => db.id === user.uid)?.activeGroupId;
 
   //---emoji---//
   const handleEmojiOpen = () => setSelectEmoji(!selectEmoji);
@@ -87,7 +89,7 @@ const Form: FC<Message> = ({
         content: message,
         image: imageUrls,
         user: userRef,
-        groupId: currentId,
+        groupId: activeId,
       });
       setMessage("");
       setImageUrls([]);

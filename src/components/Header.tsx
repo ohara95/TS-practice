@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useRecoilValue } from "recoil";
 import { animateScroll as scroll } from "react-scroll";
-import { currentGroupId, groupsData, usersData } from "../atoms_recoil";
+import { groupsData, usersData } from "../atoms_recoil";
 import { Group } from "../types";
 import UserListModal from "./organisms/UserList";
+import { AuthContext } from "../AuthService";
+import firebase from "../config/firebase";
 
 //component
 import CustomModal from "./organisms/CustomModal";
@@ -45,9 +47,9 @@ const Header = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
-  const currentId = useRecoilValue(currentGroupId);
   const groups = useRecoilValue(groupsData);
   const users = useRecoilValue(usersData);
+  const { user } = useContext(AuthContext);
 
   //memo動かない
   const scrollToTop = () => {
@@ -59,8 +61,9 @@ const Header = () => {
   const userModalOpen = () => setUserOpen(true);
   const userModalClose = () => setUserOpen(false);
 
-  const groupContext = groups.find((group) => group.id === currentId);
-
+  const activeId = users.find((db) => db.id === user.uid)?.activeGroupId;
+  const groupContext = groups.find((group) => group.id === activeId);
+  // console.log(groups.find((db) => db)?.id, activeId);
   return (
     <>
       <CssBaseline />
@@ -102,7 +105,7 @@ const Header = () => {
             title={groupContext?.name}
             src={groupContext?.iconUrl}
             favorite={groupContext?.favorite}
-            currentId={currentId}
+            currentId={activeId}
           />
           <UserListModal
             open={userOpen}
