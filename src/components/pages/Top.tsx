@@ -50,32 +50,33 @@ const Top = () => {
 
   return (
     <>
-         {loading ? (
+      {loading ? (
         <Spinner />
       ) : (
         <>
-      <Header />
-      <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
-        <div className={classes.container}>
-          <Grid container direction="row" justify="space-between" spacing={4}>
-            <Grid item xs={9} style={{ marginTop: 30 }}>
-              <Chat />
-            </Grid>
-            <Grid item xs={3} className={classes.sideBorder}>
-              <Drawer
-                variant="permanent"
-                classes={{
-                  paper: clsx(classes.drawerPaper),
-                }}
-              >
-                <Profile />
-              </Drawer>
-            </Grid>
-          </Grid>
-        </div>
-      </main>
-
+          <Header />
+          <main className={classes.content}>
+            <div className={classes.appBarSpacer} />
+            <div className={classes.container}>
+              <Grid container direction="row" justify="space-between">
+                <Grid item xs={9} style={{ marginTop: 30, paddingRight: 30 }}>
+                  <Chat />
+                </Grid>
+                <Grid item xs={3} className={classes.sideBorder}>
+                  <Drawer
+                    variant="permanent"
+                    classes={{
+                      paper: clsx(classes.drawerPaper),
+                    }}
+                  >
+                    <Profile />
+                  </Drawer>
+                </Grid>
+              </Grid>
+            </div>
+          </main>
+        </>
+      )}
     </>
   );
 };

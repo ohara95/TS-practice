@@ -1,6 +1,6 @@
-import React, { FC, useEffect, useContext } from "react";
-import { currentGroupId, usersData, groupsData } from "../../atoms_recoil";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import React, { FC, useContext } from "react";
+import { usersData, groupsData } from "../../atoms_recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { db } from "../../config/firebase";
 import { AuthContext } from "../../AuthService";
 
@@ -34,13 +34,11 @@ type Props = {
 
 const CurrentGroup: FC<Props> = ({ id, name, icon }) => {
   const classes = useStyles();
-  const setCurrentId = useSetRecoilState(currentGroupId);
   const { user } = useContext(AuthContext);
   const [users, setUsers] = useRecoilState(usersData);
   const groups = useRecoilValue(groupsData);
 
   const setActiveGroup = (id) => {
-    setCurrentId(id);
     db.collection("users").doc(user.uid).update({
       activeGroupId: id,
     });

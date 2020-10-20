@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState, useContext } from "react";
 import firebase, { db, storage } from "../../config/firebase";
 import { format } from "date-fns";
 import { useRecoilValue } from "recoil";
-import { currentGroupId, usersData } from "../../atoms_recoil";
+import { usersData } from "../../atoms_recoil";
 import { Users } from "../../types";
 import { ImageArr } from "./type";
 import { AuthContext } from "../../AuthService";
@@ -18,7 +18,6 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
-import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,9 +61,10 @@ const Item: FC<Props> = ({
   groupId,
 }) => {
   const classes = useStyles();
-  const currentId = useRecoilValue(currentGroupId);
+  const users = useRecoilValue(usersData);
   const [userDetail, setUserDetail] = useState<Users[]>([]);
   const { user } = useContext(AuthContext);
+  const activeId = users.find((db) => db.id === user.uid)?.activeGroupId;
 
   useEffect(() => {
     userRef
@@ -102,7 +102,7 @@ const Item: FC<Props> = ({
 
   return (
     <>
-      {groupId === currentId && (
+      {groupId === activeId && (
         <>
           <ListItem alignItems="flex-start">
             <ListItemAvatar>
@@ -122,7 +122,10 @@ const Item: FC<Props> = ({
                     className={classes.inline}
                     color="textPrimary"
                   >
-                    {content}
+                    {content
+                      .split(/\s/g)
+                      .reduce((cum: any, x) => [...cum, x, <br />], [])
+                      .slice(0, -1)}
                   </Typography>
                 </React.Fragment>
               }

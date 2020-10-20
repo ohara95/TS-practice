@@ -1,8 +1,9 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 import CustomForm from "../molecules/CustomForm";
 import firebase, { db } from "../../config/firebase";
-import { currentGroupId } from "../../atoms_recoil";
+import { usersData } from "../../atoms_recoil";
 import { useRecoilValue } from "recoil";
+import { AuthContext } from "../../AuthService";
 
 type Props = {
   invitationCode: string;
@@ -10,14 +11,16 @@ type Props = {
 };
 
 const InvitationGroup: FC<Props> = ({ invitationCode, setInvitationCode }) => {
-  const currentId = useRecoilValue(currentGroupId);
+  const { user } = useContext(AuthContext);
+  const users = useRecoilValue(usersData);
+  const activeId = users.find((db) => db.id === user.uid)?.activeGroupId;
   const inventMember = () => {
     if (!invitationCode) {
       return alert("入力してください");
     }
     const userRef = db.collection("users").doc(invitationCode);
     db.collection("groups")
-      .doc(currentId)
+      .doc(activeId)
       .update({
         users: firebase.firestore.FieldValue.arrayUnion(userRef),
       })

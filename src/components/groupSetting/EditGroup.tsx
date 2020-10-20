@@ -1,8 +1,9 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 import { useRecoilValue } from "recoil";
 import { db } from "../../config/firebase";
-import { currentGroupId } from "../../atoms_recoil";
+import { usersData } from "../../atoms_recoil";
 import CustomForm from "../molecules/CustomForm";
+import { AuthContext } from "../../AuthService";
 
 type Props = {
   editGroupName: string;
@@ -10,16 +11,16 @@ type Props = {
 };
 
 const EditGroup: FC<Props> = ({ editGroupName, setEditGroupName }) => {
-  const currentId = useRecoilValue(currentGroupId);
+  const users = useRecoilValue(usersData);
+  const { user } = useContext(AuthContext);
+  const activeId = users.find((db) => db.id === user.uid).activeGroupId;
   const onBtnClick = () => {
     if (!editGroupName) {
       return alert("入力して下さい！");
     }
 
-    if (currentId) {
-      db.doc(`groups/${currentId}`).update({
-        name: editGroupName,
-      });
+    if (activeId) {
+      db.doc(`groups/${activeId}`).update({ name: editGroupName });
       setEditGroupName("");
     }
   };
