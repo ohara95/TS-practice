@@ -3,16 +3,22 @@ import firebase from "../../config/firebase";
 import { AuthContext } from "../../AuthService";
 import { useForm, Controller } from "react-hook-form";
 import { Link, Redirect, useHistory } from "react-router-dom";
+import { isLoading } from "../../atoms_recoil";
+import { useRecoilState } from "recoil";
+import Spinner from "../pages/Spinner";
 // material
+import { makeStyles } from "@material-ui/core/styles";
+import { deepOrange } from "@material-ui/core/colors";
+import CssBaseline from "@material-ui/core/CssBaseline";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { deepOrange, grey } from "@material-ui/core/colors";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -51,14 +57,17 @@ const Signin = () => {
   const classes = useStyles();
   const { errors, control, handleSubmit } = useForm<UseForm>();
   const history = useHistory();
+  const [loading, setLoading] = useRecoilState(isLoading);
 
   const { user } = useContext(AuthContext);
 
   const onFormSubmit = (data: UseForm) => {
+    setLoading(true);
     firebase
       .auth()
       .signInWithEmailAndPassword(data.email, data.password)
       .then(() => {
+        setLoading(false);
         history.push("/");
       })
       .catch((e) => {
@@ -76,7 +85,17 @@ const Signin = () => {
     return <Redirect to="/" />;
   }
 
+  if (!user) {
+    setLoading(false);
+  } else {
+    setLoading(true);
+  }
+
   return (
+
+         {loading ? (
+        <Spinner />
+      ) : (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <Grid container justify="center" spacing={2}>
@@ -110,54 +129,56 @@ const Signin = () => {
                     fullWidth
                     id="email"
                     label="メールアドレス"
-                    name="email"
-                    autoComplete="email"
-                    autoFocus
+                        name="email"
+                        autoComplete="email"
+                        autoFocus
+                      />
+                    }
                   />
-                }
-              />
-              {errors.email && <Typography>入力してください</Typography>}
-              <Controller
-                name="password"
-                defaultValue=""
-                control={control}
-                rules={{ required: true }}
-                as={
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
+                  {errors.email && <Typography>入力してください</Typography>}
+                  <Controller
                     name="password"
-                    label="パスワード"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
+                    defaultValue=""
+                    control={control}
+                    rules={{ required: true }}
+                    as={
+                      <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="password"
+                        label="パスワード"
+                        type="password"
+                        id="password"
+                        autoComplete="current-password"
+                      />
+                    }
                   />
-                }
-              />
-              {errors.password && <Typography>入力してください</Typography>}
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                className={classes.submit}
-              >
-                ログイン
-              </Button>
-              <Grid container>
-                <Grid item xs>
-                  <Link to="/confirmpass">パスワードをお忘れですか？</Link>
-                </Grid>
-                <Grid item>
-                  <Link to="/signup">新規登録はこちら→</Link>
-                </Grid>
-              </Grid>
-            </form>
-          </div>
+                  {errors.password && <Typography>入力してください</Typography>}
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    className={classes.submit}
+                  >
+                    ログイン
+                  </Button>
+                  <Grid container>
+                    <Grid item xs>
+                      <Link to="/confirmpass">パスワードをお忘れですか？</Link>
+                    </Grid>
+                    <Grid item>
+                      <Link to="/signup">新規登録はこちら→</Link>
+                    </Grid>
+                  </Grid>
+                </form>
+              </div>
+            </Grid>
+          </Grid>
         </Grid>
-      </Grid>
-    </Grid>
+      )}
+    </>
   );
 };
 

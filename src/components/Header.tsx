@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useRecoilValue } from "recoil";
 import { animateScroll as scroll } from "react-scroll";
 import { currentGroupId, groupsData, usersData } from "../atoms_recoil";
+import { Group } from "../types";
+import UserListModal from "./organisms/UserList";
 
 //component
 import CustomModal from "./organisms/CustomModal";
@@ -18,6 +20,7 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import Avatar from "@material-ui/core/Avatar";
 import AvatarGroup from "@material-ui/lab/AvatarGroup";
 import { deepOrange } from "@material-ui/core/colors";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,6 +44,7 @@ const useStyles = makeStyles((theme) => ({
 const Header = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [userOpen, setUserOpen] = useState(false);
   const currentId = useRecoilValue(currentGroupId);
   const groups = useRecoilValue(groupsData);
   const users = useRecoilValue(usersData);
@@ -50,21 +54,13 @@ const Header = () => {
     scroll.scrollToTop();
   };
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const groupModalOpen = () => setOpen(true);
+  const groupModalClose = () => setOpen(false);
+  const userModalOpen = () => setUserOpen(true);
+  const userModalClose = () => setUserOpen(false);
 
-  const groupContext = () => groups.find((group) => group.id === currentId);
-  // const groupUsers = groups.map((group) => group.users);
+  const groupContext = groups.find((group) => group.id === currentId);
 
-  // const test = groupUsers?.users.map((user) => {
-  //   if (dbUsers) {
-  //     return dbUsers.map((fireStoreUser) => {
-  //       if (fireStoreUser.id === user) {
-  //         return fireStoreUser.name;
-  //       }
-  //     });
-  //   }
-  // });
   return (
     <>
       <CssBaseline />
@@ -72,7 +68,7 @@ const Header = () => {
         <Toolbar className={classes.toolbar}>
           <Avatar
             alt="groupIcon"
-            src={groupContext()?.iconUrl}
+            src={groupContext?.iconUrl}
             className={classes.groupIcon}
           />
           <Typography
@@ -83,25 +79,18 @@ const Header = () => {
             className={classes.title}
             onClick={scrollToTop}
           >
-            {groupContext()?.name}
+            {groupContext ? groupContext?.name : <CircularProgress />}
           </Typography>
-          <AvatarGroup max={4}>
-            {/* {groupUsers?.users.map((user) => {
-              if (dbUsers) {
-                return dbUsers.map((fireStoreUser) => {
-                  if (fireStoreUser.id === user) {
-                    return (
-                      <Avatar
-                        alt={fireStoreUser.name}
-                        src={fireStoreUser.avatarUrl}
-                      />
-                    );
-                  }
-                });
-              }
-            })} */}
-          </AvatarGroup>
-          <IconButton color="inherit" onClick={handleOpen}>
+          {groupContext ? (
+            <AvatarGroup max={4} onClick={userModalOpen}>
+              {groupContext?.users.map((db) => (
+                <Avatar alt={db.name} src={db.avatarUrl} />
+              ))}
+            </AvatarGroup>
+          ) : (
+            <CircularProgress />
+          )}
+          <IconButton color="inherit" onClick={groupModalOpen}>
             <Badge color="secondary">
               <MoreVertIcon />
             </Badge>
@@ -109,9 +98,17 @@ const Header = () => {
           <CustomModal
             render={<GroupSetting />}
             open={open}
-            close={handleClose}
-            title={groupContext()?.name}
-            src={groupContext()?.iconUrl}
+            close={groupModalClose}
+            title={groupContext?.name}
+            src={groupContext?.iconUrl}
+            favorite={groupContext?.favorite}
+            currentId={currentId}
+          />
+          <UserListModal
+            open={userOpen}
+            close={userModalClose}
+            title="USERLIST"
+            users={groupContext?.users}
           />
         </Toolbar>
       </AppBar>

@@ -9,8 +9,9 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isCurrentId, setIsCurrentId] = useState(false);
   const [groups, setGroups] = useRecoilState(groupsData);
-  const [currentId, setCurrentId] = useRecoilState(currentGroupId);
-  const setUsers = useSetRecoilState(usersData);
+  const setCurrentId = useSetRecoilState(currentGroupId);
+  const [users, setUsers] = useRecoilState(usersData);
+  const activeGroup = users.find((db) => db.id === user?.uid)?.activeGroupId;
 
   useEffect(() => {
     auth.onAuthStateChanged((dbUser) => setUser(dbUser));
@@ -29,30 +30,44 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    // console.log(1, "useEffect");
     if (user) {
-      // console.log(2, "useEffect + user");
-      const userPath = db.collection("users").doc(user.uid).path;
       const userRef = db.collection("users").doc(user.uid);
       db.collection("groups")
-        .where("users", "array-contains", userPath)
-        .onSnapshot((snap) => {
-          // console.log(3, "onSnapshot");
-          const groupContent = snap.docs.map((doc) => {
-            return {
-              ...doc.data(),
-              id: doc.id,
-            };
-          });
+        .where("users", "array-contains", userRef)
+        .onSnapshot(async (snap) => {
+          const groupContent = await Promise.all(
+            snap.docs.map(async (doc) => {
+              const owner = await doc
+                .data()
+                .owner.get()
+                .then((res) => res.data());
+
+              const dbUser = await Promise.all(
+                doc.data().users.map((db) => db.get().then((res) => res.data()))
+              );
+              return {
+                ...doc.data(),
+                id: doc.id,
+                owner,
+                users: dbUser,
+              };
+            })
+          );
           setGroups(groupContent);
-          // setIsCurrentId(true);
+          setIsCurrentId(true);
         });
     }
   }, [user]);
 
-  // useEffect(() => {
-  //   if (isCurrentId && !currentId) setCurrentId(groups[0].id);
-  // }, [isCurrentId]);
+  useEffect(() => {
+    if (isCurrentId) {
+      if (activeGroup) {
+        setCurrentId(activeGroup);
+      } else {
+        if (groups.length) setCurrentId(groups[0].id);
+      }
+    }
+  }, [isCurrentId]);
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>

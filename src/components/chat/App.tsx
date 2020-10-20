@@ -1,21 +1,18 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { db } from "../../config/firebase";
 import Form from "./Form";
 import Lists from "./Lists";
 import { DbMessage, ImageArr } from "./type";
-import { AuthContext } from "../../AuthService";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const App = () => {
   const [message, setMessage] = useState("");
   const [messageList, setMessageList] = useState<DbMessage[]>([]);
   const [imageUrl, setImageUrl] = useState("");
   const [imageUrls, setImageUrls] = useState<ImageArr[]>([]);
-  const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    const userRef = db.collection("users").doc(user.uid);
     db.collection("chat")
-      .where("user", "==", userRef)
       .orderBy("createdAt", "desc")
       .onSnapshot((snap) => {
         const dbMessage = snap.docs.map((doc) => {

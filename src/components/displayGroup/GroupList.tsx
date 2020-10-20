@@ -6,6 +6,7 @@ import CurrentGroup from "./CurrentGroup";
 // material
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -13,9 +14,6 @@ const useStyles = makeStyles((theme: Theme) =>
       width: "100%",
       maxWidth: 360,
       backgroundColor: theme.palette.background.paper,
-    },
-    itemText: {
-      marginLeft: 10,
     },
   })
 );
@@ -27,15 +25,18 @@ const GroupList = () => {
   return (
     <div className={classes.root}>
       <List component="nav">
-        {groups &&
+        {groups.length ? (
           groups.map((group) => (
             <CurrentGroup
               key={group.id}
-              id={group.id}
+              id={group?.id}
               name={group.name}
               icon={group.iconUrl}
             />
-          ))}
+          ))
+        ) : (
+          <CircularProgress />
+        )}
       </List>
     </div>
   );

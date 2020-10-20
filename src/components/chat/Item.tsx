@@ -1,11 +1,11 @@
-import React, { FC, useEffect, useContext, useState } from "react";
+import React, { FC, useEffect, useState, useContext } from "react";
 import firebase, { db, storage } from "../../config/firebase";
-import { AuthContext } from "../../AuthService";
 import { format } from "date-fns";
 import { useRecoilValue } from "recoil";
-import { usersData, currentGroupId } from "../../atoms_recoil";
+import { currentGroupId, usersData } from "../../atoms_recoil";
 import { Users } from "../../types";
 import { ImageArr } from "./type";
+import { AuthContext } from "../../AuthService";
 
 // material
 import { makeStyles } from "@material-ui/core/styles";
@@ -18,6 +18,7 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,6 +39,9 @@ const useStyles = makeStyles((theme) => ({
     height: "20%",
     margin: theme.spacing(2),
   },
+  otherTweet: {
+    marginRight: theme.spacing(3),
+  },
 }));
 
 type Props = {
@@ -45,7 +49,6 @@ type Props = {
   id: string;
   createdAt: firebase.firestore.Timestamp;
   image: ImageArr[];
-  // memo |Users怒られる
   userRef: firebase.firestore.DocumentReference;
   groupId: string;
 };
@@ -59,25 +62,43 @@ const Item: FC<Props> = ({
   groupId,
 }) => {
   const classes = useStyles();
-  const users = useRecoilValue(usersData);
   const currentId = useRecoilValue(currentGroupId);
+  const [userDetail, setUserDetail] = useState<Users[]>([]);
   const { user } = useContext(AuthContext);
-  const [userDetail, setUserDetail] = useState([]);
 
   useEffect(() => {
-    userRef.get().then((res) => setUserDetail([...userDetail, res.data()]));
+    userRef
+      .get()
+      .then((res) => setUserDetail([...userDetail, res.data()] as Users[]));
   }, []);
 
   const deleteItem = (id: string) => {
     db.collection("chat").doc(id).delete();
-
     if (image) image.map((db) => storage.refFromURL(db.url).delete());
   };
 
-  //memo 何で全部出てくる？取り出せないし
-  // console.log(userDetail.find(({ avatarUrl }) => avatarUrl));
+  const userContext = userDetail.find((db) => db);
 
-  // console.log(image.find((db) => db.url));
+  const deleteIcon = () => {
+    if (user && userContext) {
+      if (user.uid === userContext?.id) {
+        return (
+          <IconButton
+            onClick={() => {
+              deleteItem(id);
+            }}
+            edge="end"
+            aria-label="delete"
+            size="small"
+          >
+            <DeleteIcon />
+          </IconButton>
+        );
+      } else {
+        return <span className={classes.otherTweet} />;
+      }
+    }
+  };
 
   return (
     <>
@@ -85,17 +106,19 @@ const Item: FC<Props> = ({
         <>
           <ListItem alignItems="flex-start">
             <ListItemAvatar>
-              <Avatar
-                src={userDetail.find(({ avatarUrl }) => avatarUrl) as string}
-              />
+              <Avatar src={userContext && userContext.avatarUrl} />
             </ListItemAvatar>
             <ListItemText
-              primary={userDetail.map(({ name }) => name)}
+              primary={
+                <Typography variant="body1" style={{ fontWeight: "bold" }}>
+                  {userContext && userContext.name}
+                </Typography>
+              }
               secondary={
                 <React.Fragment>
                   <Typography
                     component="span"
-                    variant="body2"
+                    variant="body1"
                     className={classes.inline}
                     color="textPrimary"
                   >
@@ -110,17 +133,8 @@ const Item: FC<Props> = ({
               className={classes.inline}
               color="textSecondary"
             >
-              {format(new Date(createdAt.seconds * 1000), "yyyy/MM/dd hh:mm")}
-              <IconButton
-                onClick={() => {
-                  deleteItem(id);
-                }}
-                edge="end"
-                aria-label="delete"
-                size="small"
-              >
-                <DeleteIcon />
-              </IconButton>
+              {format(new Date(createdAt.seconds * 1000), "yyyy/MM/dd HH:mm")}
+              {deleteIcon()}
             </Typography>
           </ListItem>
           <Grid

@@ -69,16 +69,16 @@ const Signup = () => {
               name: user?.displayName,
               id: user?.uid,
               avatarUrl: "",
+              activeGroupId: "",
             });
 
-            db.collection("groups")
-              .doc()
-              .set({
-                groupName: "ホーム",
-                owner: user.uid,
-                users: firebase.firestore.FieldValue.arrayUnion(user.uid),
-                createdAt: new Date(),
-              });
+            const userRef = db.collection("users").doc(user.uid);
+            db.collection("groups").add({
+              name: "ホーム",
+              owner: userRef,
+              users: firebase.firestore.FieldValue.arrayUnion(userRef),
+              createdAt: new Date(),
+            });
           });
         history.push("/");
       })

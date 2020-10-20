@@ -8,6 +8,8 @@ import { handleCloudUpload } from "../utils/imageUpload";
 import { usersData } from "../atoms_recoil";
 import CreateGroup from "../components/CreateGroup";
 import GroupList from "./displayGroup";
+import { isLoading } from "../atoms_recoil";
+import { useSetRecoilState } from "recoil";
 
 //material
 import { makeStyles } from "@material-ui/core/styles";
@@ -27,7 +29,6 @@ import Tooltip from "@material-ui/core/Tooltip";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Paper from "@material-ui/core/Paper";
 //icon
-import FavoriteIcon from "@material-ui/icons/Favorite";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import AddIcon from "@material-ui/icons/Add";
@@ -64,6 +65,7 @@ const Profile = () => {
   const [openTip, setOpenTip] = useState(false);
   const { user } = useContext(AuthContext);
   const users = useRecoilValue(usersData);
+  const setLoading = useSetRecoilState(isLoading);
 
   const handleExpandClick = () => setExpanded(!expanded);
   const handleCloseTip = () => setOpenTip(false);
@@ -79,11 +81,12 @@ const Profile = () => {
         .then()
         .catch((err) => console.log(err, "changeName"));
     }
+    setUsername("");
   };
-
+  //memo リロードしないとchat情報と同期しない
   const displayName = () => {
     if (users && user) {
-      const findUser = users.find((dbUser: any) => dbUser.id === user.uid);
+      const findUser = users.find((dbUser) => dbUser.id === user.uid);
       if (findUser) {
         return findUser.name;
       }
@@ -118,9 +121,6 @@ const Profile = () => {
       />
       <CardHeader title={displayName()} />
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon color="secondary" />
-        </IconButton>
         <IconButton
           aria-label="addGroup"
           onClick={() => {
@@ -219,7 +219,9 @@ const Profile = () => {
           </form>
           <Button
             onClick={() => {
-              auth.signOut();
+              auth.signOut().then(() => {
+                setLoading(false);
+              });
             }}
             fullWidth
             variant="contained"

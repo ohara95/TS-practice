@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { isLoading, usersData } from "../../atoms_recoil";
+import { AuthContext } from "../../AuthService";
 //component
 import Chat from "../chat";
 import Profile from "../Profile";
 import Header from "../Header";
+import Spinner from "../pages/Spinner";
 // material
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -38,8 +42,18 @@ const useStyles = makeStyles((theme) => ({
 
 const Top = () => {
   const classes = useStyles();
+  const [loading, setLoading] = useRecoilState(isLoading);
+  const { user } = useContext(AuthContext);
+  const users = useRecoilValue(usersData);
+
+  if (user || users) setLoading(false);
+
   return (
     <>
+         {loading ? (
+        <Spinner />
+      ) : (
+        <>
       <Header />
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
@@ -61,6 +75,7 @@ const Top = () => {
           </Grid>
         </div>
       </main>
+
     </>
   );
 };
