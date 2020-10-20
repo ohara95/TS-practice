@@ -35,6 +35,12 @@ const useStyles = makeStyles((theme: Theme) =>
     iconColor: {
       color: red["A200"],
     },
+    // overTitle: {
+    //   textOverflow: "ellipsis",
+    //   whiteSpace: "nowrap",
+    //   overflow: "hidden",
+    //   width: "50%",
+    // },
   })
 );
 

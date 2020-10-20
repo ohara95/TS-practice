@@ -20,8 +20,11 @@ const InvitationGroup: FC<Props> = ({ invitationCode, setInvitationCode }) => {
       .doc(currentId)
       .update({
         users: firebase.firestore.FieldValue.arrayUnion(userRef),
+      })
+      .then(() => {
+        alert("追加出来ました！");
+        setInvitationCode("");
       });
-    setInvitationCode("");
   };
   return (
     <CustomForm

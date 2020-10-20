@@ -3,6 +3,7 @@ import { useRecoilValue } from "recoil";
 import { animateScroll as scroll } from "react-scroll";
 import { currentGroupId, groupsData, usersData } from "../atoms_recoil";
 import { Group } from "../types";
+import UserListModal from "./organisms/UserList";
 
 //component
 import CustomModal from "./organisms/CustomModal";
@@ -59,6 +60,7 @@ const useStyles = makeStyles((theme) => ({
 const Header = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [userOpen, setUserOpen] = useState(false);
   const currentId = useRecoilValue(currentGroupId);
   const groups = useRecoilValue(groupsData);
   const users = useRecoilValue(usersData);
@@ -68,8 +70,10 @@ const Header = () => {
     scroll.scrollToTop();
   };
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const groupModalOpen = () => setOpen(true);
+  const groupModalClose = () => setOpen(false);
+  const userModalOpen = () => setUserOpen(true);
+  const userModalClose = () => setUserOpen(false);
 
   const groupContext = groups.find((group) => group.id === currentId);
 
@@ -93,12 +97,12 @@ const Header = () => {
           >
             {groupContext?.name}
           </Typography>
-          <AvatarGroup max={4}>
+          <AvatarGroup max={4} onClick={userModalOpen}>
             {groupContext?.users.map((db) => (
               <Avatar alt={db.name} src={db.avatarUrl} />
             ))}
           </AvatarGroup>
-          <IconButton color="inherit" onClick={handleOpen}>
+          <IconButton color="inherit" onClick={groupModalOpen}>
             <Badge color="secondary">
               <MoreVertIcon />
             </Badge>
@@ -106,11 +110,17 @@ const Header = () => {
           <CustomModal
             render={<GroupSetting />}
             open={open}
-            close={handleClose}
+            close={groupModalClose}
             title={groupContext?.name}
             src={groupContext?.iconUrl}
             favorite={groupContext?.favorite}
             currentId={currentId}
+          />
+          <UserListModal
+            open={userOpen}
+            close={userModalClose}
+            title="USERLIST"
+            users={groupContext?.users}
           />
         </Toolbar>
       </AppBar>

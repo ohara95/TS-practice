@@ -11,7 +11,6 @@ import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import Divider from "@material-ui/core/Divider";
 import { deepOrange, red } from "@material-ui/core/colors";
 import FavoriteIcon from "@material-ui/icons/Favorite";
-import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -48,7 +47,7 @@ const CurrentGroup: FC<Props> = ({ id, name, icon }) => {
     setUsers(users.map((user) => ({ ...user, activeGroupId: id })));
   };
 
-  const currentUser = users.find((db) => db.id === user.uid).activeGroupId;
+  const currentUser = users.find((db) => db.id === user.uid)?.activeGroupId;
   const isFavorite = groups.find((group) => group.id === id)?.favorite;
 
   return (
