@@ -14,9 +14,6 @@ const useStyles = makeStyles((theme: Theme) =>
       maxWidth: 360,
       backgroundColor: theme.palette.background.paper,
     },
-    itemText: {
-      marginLeft: 10,
-    },
   })
 );
 
