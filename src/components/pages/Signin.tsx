@@ -61,8 +61,8 @@ const Signin = () => {
       .auth()
       .signInWithEmailAndPassword(data.email, data.password)
       .then(() => {
-        history.push("/");
         setLoading(false);
+        history.push("/");
       })
       .catch((e) => {
         if (e.code === "auth/wrong-password") {
@@ -77,6 +77,12 @@ const Signin = () => {
 
   if (user) {
     return <Redirect to="/" />;
+  }
+
+  if (!user) {
+    setLoading(false);
+  } else {
+    setLoading(true);
   }
 
   return (

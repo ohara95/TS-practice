@@ -32,9 +32,8 @@ const Top = () => {
   const { user } = useContext(AuthContext);
   const users = useRecoilValue(usersData);
 
-  if (user || users) {
-    setLoading(false);
-  }
+  if (user || users) setLoading(false);
+
   return (
     <>
       {loading ? (

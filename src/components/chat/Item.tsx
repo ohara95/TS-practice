@@ -18,6 +18,7 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,7 +63,6 @@ const Item: FC<Props> = ({
 }) => {
   const classes = useStyles();
   const currentId = useRecoilValue(currentGroupId);
-  const users = useRecoilValue(usersData);
   const [userDetail, setUserDetail] = useState<Users[]>([]);
   const { user } = useContext(AuthContext);
 
@@ -78,11 +78,6 @@ const Item: FC<Props> = ({
   };
 
   const userContext = userDetail.find((db) => db);
-  const currentGroup = () => {
-    if (userContext) {
-      return userContext?.activeGroupId;
-    }
-  };
 
   const deleteIcon = () => {
     if (user && userContext) {
@@ -140,16 +135,6 @@ const Item: FC<Props> = ({
             >
               {format(new Date(createdAt.seconds * 1000), "yyyy/MM/dd HH:mm")}
               {deleteIcon()}
-              {/* <IconButton
-                onClick={() => {
-                  deleteItem(id);
-                }}
-                edge="end"
-                aria-label="delete"
-                size="small"
-              >
-                <DeleteIcon />
-              </IconButton> */}
             </Typography>
           </ListItem>
           <Grid

@@ -8,6 +8,8 @@ import { handleCloudUpload } from "../utils/imageUpload";
 import { usersData } from "../atoms_recoil";
 import CreateGroup from "../components/CreateGroup";
 import GroupList from "./displayGroup";
+import { isLoading } from "../atoms_recoil";
+import { useSetRecoilState } from "recoil";
 
 //material
 import { makeStyles } from "@material-ui/core/styles";
@@ -25,8 +27,8 @@ import CardMedia from "@material-ui/core/CardMedia";
 import Grid from "@material-ui/core/Grid";
 import Tooltip from "@material-ui/core/Tooltip";
 import InputAdornment from "@material-ui/core/InputAdornment";
+
 //icon
-import FavoriteIcon from "@material-ui/icons/Favorite";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import AddIcon from "@material-ui/icons/Add";
@@ -62,6 +64,7 @@ const Profile = () => {
   const [openTip, setOpenTip] = useState(false);
   const { user } = useContext(AuthContext);
   const users = useRecoilValue(usersData);
+  const setLoading = useSetRecoilState(isLoading);
 
   const handleExpandClick = () => setExpanded(!expanded);
   const handleCloseTip = () => setOpenTip(false);
@@ -216,7 +219,9 @@ const Profile = () => {
           </form>
           <Button
             onClick={() => {
-              auth.signOut();
+              auth.signOut().then(() => {
+                setLoading(false);
+              });
             }}
             fullWidth
             variant="contained"
