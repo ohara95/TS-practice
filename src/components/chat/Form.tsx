@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     hoverBg: {
       position: "absolute",
-      width: "15%",
+      width: "17%",
       height: "40%",
       textAlign: "right",
       backgroundColor: "rgba(0,0,0,0.5)",

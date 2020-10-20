@@ -9,8 +9,9 @@ import Header from "../Header";
 import Spinner from "../pages/Spinner";
 // material
 import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
+import clsx from "clsx";
+import Drawer from "@material-ui/core/Drawer";
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -20,10 +21,23 @@ const useStyles = makeStyles((theme) => ({
     background: "white",
   },
   container: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
+    paddingLeft: theme.spacing(4),
   },
   appBarSpacer: theme.mixins.toolbar,
+  drawerPaper: {
+    height: "100vh",
+    position: "relative",
+    whiteSpace: "nowrap",
+    width: "100%",
+    zIndex: 0,
+    transition: theme.transitions.create("width", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  sideBorder: {
+    borderLeft: "1px solid rgba(0, 0, 0, 0.12)",
+  },
 }));
 
 const Top = () => {
@@ -36,31 +50,32 @@ const Top = () => {
 
   return (
     <>
-      {loading ? (
+         {loading ? (
         <Spinner />
       ) : (
         <>
-          <Header />
-          <main className={classes.content}>
-            <div className={classes.appBarSpacer} />
-            <Container maxWidth="lg" className={classes.container}>
-              <Grid
-                container
-                direction="row"
-                justify="space-between"
-                spacing={2}
+      <Header />
+      <main className={classes.content}>
+        <div className={classes.appBarSpacer} />
+        <div className={classes.container}>
+          <Grid container direction="row" justify="space-between" spacing={4}>
+            <Grid item xs={9} style={{ marginTop: 30 }}>
+              <Chat />
+            </Grid>
+            <Grid item xs={3} className={classes.sideBorder}>
+              <Drawer
+                variant="permanent"
+                classes={{
+                  paper: clsx(classes.drawerPaper),
+                }}
               >
-                <Grid item xs={9}>
-                  <Chat />
-                </Grid>
-                <Grid item xs={3}>
-                  <Profile />
-                </Grid>
-              </Grid>
-            </Container>
-          </main>
-        </>
-      )}
+                <Profile />
+              </Drawer>
+            </Grid>
+          </Grid>
+        </div>
+      </main>
+
     </>
   );
 };
