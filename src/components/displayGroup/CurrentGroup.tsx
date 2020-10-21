@@ -16,12 +16,23 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     itemText: {
       marginLeft: 10,
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      width: "80%",
     },
     currentGroup: {
       backgroundColor: deepOrange[50],
     },
     iconColor: {
       color: red["A200"],
+    },
+    overTitle: {
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      width: "50%",
+      textAlign: "center",
     },
   })
 );
@@ -59,6 +70,7 @@ const CurrentGroup: FC<Props> = ({ id, name, icon }) => {
         className={currentUser === id && classes.currentGroup}
       >
         <Avatar aria-label="recipe" src={icon ? icon : "/"} />
+        {/* display:blockがとれない */}
         <ListItemText primary={name} className={classes.itemText} />
         {isFavorite && <FavoriteIcon className={classes.iconColor} />}
       </ListItem>
