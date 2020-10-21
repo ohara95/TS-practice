@@ -15,6 +15,7 @@ import Grid from "@material-ui/core/Grid";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import { red } from "@material-ui/core/colors";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -106,9 +107,13 @@ const GroupModal: FC<Props> = ({
           >
             <IconButton aria-label="add to favorites" onClick={isFavorite}>
               {favorite ? (
-                <FavoriteIcon className={classes.iconColor} />
+                <Tooltip title="favorited!">
+                  <FavoriteIcon className={classes.iconColor} />
+                </Tooltip>
               ) : (
-                <FavoriteBorderIcon />
+                <Tooltip title="favorite?">
+                  <FavoriteBorderIcon />
+                </Tooltip>
               )}
             </IconButton>
             <Typography>{title}</Typography>
@@ -122,3 +127,24 @@ const GroupModal: FC<Props> = ({
 };
 
 export default GroupModal;
+
+// import Tooltip from "@material-ui/core/Tooltip";
+
+// const useStyles = makeStyles((theme: Theme) =>
+//   createStyles({
+// @ -106,9 +107,13 @@ const GroupModal: FC<Props> = ({
+//           >
+//             <IconButton aria-label="add to favorites" onClick={isFavorite}>
+//               {favorite ? (
+//                 <FavoriteIcon className={classes.iconColor} />
+//                 <Tooltip title="favorited!">
+//                   <FavoriteIcon className={classes.iconColor} />
+//                 </Tooltip>
+//               ) : (
+//                 <FavoriteBorderIcon />
+//                 <Tooltip title="favorite?">
+//                   <FavoriteBorderIcon />
+//                 </Tooltip>
+//               )}
+//             </IconButton>
+//             <Typography>{title}</Typography>
