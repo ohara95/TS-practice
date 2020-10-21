@@ -18,5 +18,5 @@ export const currentGroupId = atom({
 
 export const isLoading = atom({
   key: "isLoading",
-  default: false,
+  default: true,
 });
