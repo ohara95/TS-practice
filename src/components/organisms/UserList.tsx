@@ -69,7 +69,7 @@ const UserListModal: FC<Props> = ({ open, title, close, users }) => {
             <Typography style={{ fontWeight: "bold" }}>{title}</Typography>
             <div className={classes.avatar}>
               {users?.map((db) => (
-                <Tooltip title={db.name}>
+                <Tooltip title={db.name} key={db.name}>
                   <Avatar alt={db.name} src={db.avatarUrl} />
                 </Tooltip>
               ))}

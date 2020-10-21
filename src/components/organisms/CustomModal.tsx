@@ -36,12 +36,13 @@ const useStyles = makeStyles((theme: Theme) =>
     iconColor: {
       color: red["A200"],
     },
-    // overTitle: {
-    //   textOverflow: "ellipsis",
-    //   whiteSpace: "nowrap",
-    //   overflow: "hidden",
-    //   width: "50%",
-    // },
+    overTitle: {
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      width: "50%",
+      textAlign: "center",
+    },
   })
 );
 
@@ -116,7 +117,7 @@ const GroupModal: FC<Props> = ({
                 </Tooltip>
               )}
             </IconButton>
-            <Typography>{title}</Typography>
+            <Typography className={classes.overTitle}>{title}</Typography>
             <Avatar aria-label="recipe" className={classes.large} src={src} />
           </Grid>
           {render}

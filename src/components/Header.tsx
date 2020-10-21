@@ -87,7 +87,7 @@ const Header = () => {
           {groupContext ? (
             <AvatarGroup max={4} onClick={userModalOpen}>
               {groupContext?.users.map((db) => (
-                <Avatar alt={db.name} src={db.avatarUrl} />
+                <Avatar key={db.name} alt={db.name} src={db.avatarUrl} />
               ))}
             </AvatarGroup>
           ) : (
