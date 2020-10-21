@@ -63,7 +63,7 @@ const Header = () => {
 
   const activeId = users.find((db) => db.id === user.uid)?.activeGroupId;
   const groupContext = groups.find((group) => group.id === activeId);
-  // console.log(groups.find((db) => db)?.id, activeId);
+
   return (
     <>
       <CssBaseline />
