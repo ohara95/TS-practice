@@ -67,9 +67,9 @@ const Item: FC<Props> = ({
   const activeId = users.find((db) => db.id === user.uid)?.activeGroupId;
 
   useEffect(() => {
-    userRef
-      .get()
-      .then((res) => setUserDetail([...userDetail, res.data()] as Users[]));
+    userRef.onSnapshot((snap) =>
+      setUserDetail([...userDetail, snap.data()] as Users[])
+    );
   }, []);
 
   const deleteItem = (id: string) => {
