@@ -42,30 +42,41 @@ const useStyles = makeStyles((theme) => ({
 
 const Top = () => {
   const classes = useStyles();
+  const [loading, setLoading] = useRecoilState(isLoading);
+  const users = useRecoilValue(usersData);
+  const { user } = useContext(AuthContext);
+
+  if (user || users) setLoading(false);
 
   return (
     <>
-      <Header />
-      <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
-        <div className={classes.container}>
-          <Grid container direction="row" justify="space-between">
-            <Grid item xs={9} style={{ marginTop: 30, paddingRight: 30 }}>
-              <Chat />
-            </Grid>
-            <Grid item xs={3} className={classes.sideBorder}>
-              <Drawer
-                variant="permanent"
-                classes={{
-                  paper: clsx(classes.drawerPaper),
-                }}
-              >
-                <Profile />
-              </Drawer>
-            </Grid>
-          </Grid>
-        </div>
-      </main>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <>
+          <Header />
+          <main className={classes.content}>
+            <div className={classes.appBarSpacer} />
+            <div className={classes.container}>
+              <Grid container direction="row" justify="space-between">
+                <Grid item xs={9} style={{ marginTop: 30, paddingRight: 30 }}>
+                  <Chat />
+                </Grid>
+                <Grid item xs={3} className={classes.sideBorder}>
+                  <Drawer
+                    variant="permanent"
+                    classes={{
+                      paper: clsx(classes.drawerPaper),
+                    }}
+                  >
+                    <Profile />
+                  </Drawer>
+                </Grid>
+              </Grid>
+            </div>
+          </main>
+        </>
+      )}
     </>
   );
 };

@@ -3,7 +3,7 @@ import { usersData, groupsData } from "../../atoms_recoil";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { db } from "../../config/firebase";
 import { AuthContext } from "../../AuthService";
-
+//material
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Avatar from "@material-ui/core/Avatar";
@@ -70,7 +70,7 @@ const CurrentGroup: FC<Props> = ({ id, name, icon }) => {
         className={currentUser === id && classes.currentGroup}
       >
         <Avatar aria-label="recipe" src={icon ? icon : "/"} />
-        {/* display:blockがとれない */}
+        {/*memo display:blockがとれない */}
         <ListItemText primary={name} className={classes.itemText} />
         {isFavorite && <FavoriteIcon className={classes.iconColor} />}
       </ListItem>

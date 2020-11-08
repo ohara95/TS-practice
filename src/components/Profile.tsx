@@ -83,7 +83,6 @@ const Profile = () => {
     }
     setUsername("");
   };
-  //memo リロードしないとchat情報と同期しない
   const displayName = () => {
     if (users && user) {
       const findUser = users.find((dbUser) => dbUser.id === user.uid);
