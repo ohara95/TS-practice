@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useRecoilState } from "recoil";
 import { animateScroll as scroll } from "react-scroll";
 import { groupsData, usersData } from "../atoms_recoil";
-import { Group } from "../types";
 import UserListModal from "./organisms/UserList";
 import { AuthContext } from "../AuthService";
-import firebase from "../config/firebase";
+import { db } from "../config/firebase";
 
 //component
 import CustomModal from "./organisms/CustomModal";
@@ -47,8 +46,9 @@ const Header = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
+  const [activeId, setActiveId] = useState("");
   const groups = useRecoilValue(groupsData);
-  const users = useRecoilValue(usersData);
+  const [users, setUsers] = useRecoilState(usersData);
   const { user } = useContext(AuthContext);
 
   //memo動かない
@@ -61,7 +61,22 @@ const Header = () => {
   const userModalOpen = () => setUserOpen(true);
   const userModalClose = () => setUserOpen(false);
 
-  const activeId = users.find((db) => db.id === user.uid)?.activeGroupId;
+  useEffect(() => {
+    if (users) {
+      setActiveId(users.find((db) => db.id === user.uid)?.activeGroupId);
+    }
+  }, [users]);
+
+  useEffect(() => {
+    if (activeId === "first" && groups) {
+      const groupId = groups.find((group) => group).id;
+      db.collection("users").doc(user.uid).update({
+        activeGroupId: groupId,
+      });
+      setUsers(users.map((user) => ({ ...user, activeGroupId: groupId })));
+    }
+  }, [groups]);
+
   const groupContext = groups.find((group) => group.id === activeId);
 
   return (
@@ -71,7 +86,7 @@ const Header = () => {
         <Toolbar className={classes.toolbar}>
           <Avatar
             alt="groupIcon"
-            src={groupContext?.iconUrl}
+            src={groupContext && groupContext.iconUrl}
             className={classes.groupIcon}
           />
           <Typography
@@ -82,11 +97,11 @@ const Header = () => {
             className={classes.title}
             onClick={scrollToTop}
           >
-            {groupContext ? groupContext?.name : <CircularProgress />}
+            {groupContext ? groupContext.name : <CircularProgress />}
           </Typography>
           {groupContext ? (
             <AvatarGroup max={4} onClick={userModalOpen}>
-              {groupContext?.users.map((db) => (
+              {groupContext.users.map((db) => (
                 <Avatar key={db.name} alt={db.name} src={db.avatarUrl} />
               ))}
             </AvatarGroup>
@@ -102,16 +117,16 @@ const Header = () => {
             render={<GroupSetting />}
             open={open}
             close={groupModalClose}
-            title={groupContext?.name}
-            src={groupContext?.iconUrl}
-            favorite={groupContext?.favorite}
+            title={groupContext && groupContext.name}
+            src={groupContext && groupContext.iconUrl}
+            favorite={groupContext && groupContext.favorite}
             currentId={activeId}
           />
           <UserListModal
             open={userOpen}
             close={userModalClose}
             title="USERLIST"
-            users={groupContext?.users}
+            users={groupContext && groupContext.users}
           />
         </Toolbar>
       </AppBar>

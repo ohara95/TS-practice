@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import firebase, { auth, db } from "../../config/firebase";
 import { useForm, Controller } from "react-hook-form";
 import { useHistory } from "react-router-dom";
