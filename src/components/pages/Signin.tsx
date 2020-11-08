@@ -74,12 +74,17 @@ const Signin = () => {
         if (e.code === "auth/too-many-requests") {
           return alert("しばらく時間をおいて再度お試しください");
         }
+        if (e.code === "auth/user-not-found") {
+          return alert("メールアドレスに誤りがあります");
+        }
         console.log(e, "signin");
       });
   };
 
   if (user) {
     return <Redirect to="/" />;
+  } else {
+    setLoading(false);
   }
 
   return (
