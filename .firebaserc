@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "test-9fc4e"
+  },
+  "targets": {
+    "test-9fc4e": {
+      "hosting": {
+        "ring-chatapp": [
+          "ring-chatapp"
+        ]
+      }
+    }
   }
 }
