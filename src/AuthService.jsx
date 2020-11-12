@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     auth.onAuthStateChanged((dbUser) => {
       setUser(dbUser);
-      if (dbUser == null) setLoading(false);
+      setLoading(false);
     });
   }, []);
 

@@ -1,12 +1,8 @@
-import React, { useContext } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { isLoading, usersData } from "../../atoms_recoil";
-import { AuthContext } from "../../AuthService";
+import React from "react";
 //component
 import Chat from "../chat";
 import Profile from "../Profile";
 import Header from "../Header";
-import Spinner from "../pages/Spinner";
 // material
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -42,41 +38,30 @@ const useStyles = makeStyles((theme) => ({
 
 const Top = () => {
   const classes = useStyles();
-  const [loading, setLoading] = useRecoilState(isLoading);
-  const users = useRecoilValue(usersData);
-  const { user } = useContext(AuthContext);
-
-  if (user || users) setLoading(false);
 
   return (
     <>
-      {loading ? (
-        <Spinner />
-      ) : (
-        <>
-          <Header />
-          <main className={classes.content}>
-            <div className={classes.appBarSpacer} />
-            <div className={classes.container}>
-              <Grid container direction="row" justify="space-between">
-                <Grid item xs={9} style={{ marginTop: 30, paddingRight: 30 }}>
-                  <Chat />
-                </Grid>
-                <Grid item xs={3} className={classes.sideBorder}>
-                  <Drawer
-                    variant="permanent"
-                    classes={{
-                      paper: clsx(classes.drawerPaper),
-                    }}
-                  >
-                    <Profile />
-                  </Drawer>
-                </Grid>
-              </Grid>
-            </div>
-          </main>
-        </>
-      )}
+      <Header />
+      <main className={classes.content}>
+        <div className={classes.appBarSpacer} />
+        <div className={classes.container}>
+          <Grid container direction="row" justify="space-between">
+            <Grid item xs={9} style={{ marginTop: 30, paddingRight: 30 }}>
+              <Chat />
+            </Grid>
+            <Grid item xs={3} className={classes.sideBorder}>
+              <Drawer
+                variant="permanent"
+                classes={{
+                  paper: clsx(classes.drawerPaper),
+                }}
+              >
+                <Profile />
+              </Drawer>
+            </Grid>
+          </Grid>
+        </div>
+      </main>
     </>
   );
 };
